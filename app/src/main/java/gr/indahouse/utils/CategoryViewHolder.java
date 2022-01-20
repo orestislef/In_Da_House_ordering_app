@@ -14,7 +14,7 @@ public class CategoryViewHolder extends RecyclerView.ViewHolder{
 
     private final String TAG = "CategoryViewHolder";
 
-    public CircleImageView catProfileImage;
+    public CircleImageView catImage;
     public TextView catName, catDescription;
     public CardView catCardView;
     public ConstraintLayout singleViewCategoryConstraint;
@@ -23,11 +23,9 @@ public class CategoryViewHolder extends RecyclerView.ViewHolder{
         super(itemView);
 
         singleViewCategoryConstraint = itemView.findViewById(R.id.single_view_category_constraint);
-        catProfileImage = itemView.findViewById(R.id.categoryImage);
+        catImage = itemView.findViewById(R.id.categoryImage);
         catName = itemView.findViewById(R.id.categoryName);
         catDescription = itemView.findViewById(R.id.categoryDescription);
         catCardView = itemView.findViewById(R.id.singleCategoryCardView);
-
-
     }
 }

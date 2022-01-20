@@ -1,25 +1,16 @@
 package gr.indahouse.utils;
 
 public class Categories {
-    private String idOfCategory, categoryImageUrl, categoryName, categoryDesc;
+    private String categoryId, categoryImageUrl, categoryName, categoryDesc;
 
     public Categories() {
-
     }
 
-    public Categories(String idOfCategory, String categoryDesc, String categoryImageUrl, String categoryName) {
-        this.idOfCategory = idOfCategory;
+    public Categories(String categoryId, String categoryDesc, String categoryImageUrl, String categoryName) {
+        this.categoryId = categoryId;
         this.categoryDesc = categoryDesc;
         this.categoryImageUrl = categoryImageUrl;
         this.categoryName = categoryName;
-    }
-
-    public String getIdOfCategory() {
-        return idOfCategory;
-    }
-
-    public void setIdOfCategory(String idOfCategory) {
-        this.idOfCategory = idOfCategory;
     }
 
     public String getCategoryImageUrl() {
@@ -44,5 +35,13 @@ public class Categories {
 
     public void setCategoryDesc(String categoryDesc) {
         this.categoryDesc = categoryDesc;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 }
