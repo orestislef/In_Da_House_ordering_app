@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Picasso.get().load(profileImageUrlV).placeholder(R.drawable.ic_baseline_person_24).resize(250, 250).centerInside().into(profileImageViewHeader);
 
                         loadCategories();
-                        /*loadProducts();*/
+                        //loadProducts();
                     }
                 }
 
@@ -193,6 +193,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void loadCategories() {
+        toolbar.setTitle(getString(R.string.app_name));
+        toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24);
+
         categoryOptions = new FirebaseRecyclerOptions.Builder<Categories>().setQuery(Objects.requireNonNull(mCategoryRef), Categories.class).build();
 
         categoryAdapter = new FirebaseRecyclerAdapter<Categories, CategoryViewHolder>(categoryOptions) {
@@ -205,15 +208,55 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             protected void onBindViewHolder(@NonNull CategoryViewHolder holder, int position, @NonNull Categories model) {
-                Log.d(TAG, "onBindViewHolder: " + position + " " + model.getCategoryName() + "\t" + model.getCategoryImageUrl());
+                Log.d(TAG, "onBindViewHolderCategories: " + position + " " + model.getCategoryName() + "\t" + model.getCategoryImageUrl());
                 holder.catName.setText(model.getCategoryName());
                 holder.catDescription.setText(model.getCategoryDesc());
-                Picasso.get().load(model.getCategoryImageUrl()).placeholder(R.drawable.ic_baseline_local_cafe_24).resize(250, 250).centerInside().into(holder.catProfileImage);
+                Picasso.get().load(model.getCategoryImageUrl()).placeholder(R.drawable.ic_baseline_local_cafe_24).resize(250, 250).centerInside().into(holder.catImage);
+
+                holder.singleViewCategoryConstraint.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(TAG, "onClick: categoryId: " + model.getCategoryId());
+                        loadProducts(model.getCategoryId());
+                    }
+                });
             }
         };
         categoryAdapter.startListening();
         recyclerView.setAdapter(categoryAdapter);
         Log.d(TAG, "onDataChange: CategoryAdapterStartsListening");
+    }
+
+    private void loadProducts(String categoryID) {
+        productOptions = new FirebaseRecyclerOptions.Builder<Products>().setQuery(mProductRef.orderByChild(getString(R.string.ref_category_id)).equalTo(categoryID), Products.class).build();
+
+        productAdapter = new FirebaseRecyclerAdapter<Products, ProductViewHolder>(productOptions) {
+            @Override
+            protected void onBindViewHolder(@NonNull ProductViewHolder holder, int position, @NonNull Products model) {
+                Log.d(TAG, "onBindViewHolderProduct: " + position + " " + model.getProductName() + "\t" + model.getProductPrice());
+                holder.prodName.setText(model.getProductName());
+                holder.prodPrice.setText(model.getProductPrice());
+            }
+
+            @NonNull
+            @Override
+            public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.single_view_product, parent, false);
+                return new ProductViewHolder(view);
+            }
+        };
+        productAdapter.startListening();
+        recyclerView.setAdapter(productAdapter);
+        Log.d(TAG, "onDataChange: ProductAdapterStartsListening");
+
+        toolbar.setTitle(categoryID);
+        toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadCategories();
+            }
+        });
     }
 
 }

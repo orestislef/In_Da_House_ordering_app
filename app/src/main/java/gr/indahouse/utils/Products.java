@@ -1,7 +1,7 @@
 package gr.indahouse.utils;
 
 public class Products {
-    private String idOfProduct,productImageUrl, productName, productDesc, productPrice;
+    private String idOfProduct, productImageUrl, productName, productDesc, productPrice;
 
     public Products() {
     }
@@ -50,7 +50,7 @@ public class Products {
         return productPrice;
     }
 
-    public void setProductPrice(String idOfProduct) {
-        this.productPrice = productPrice;
+    public void setProductPrice(String productPrice) {
+        this.productPrice = productPrice+"€";
     }
 }
