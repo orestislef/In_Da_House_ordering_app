@@ -56,7 +56,9 @@
     <!--for MainActivity -->
     <string name="time_ago_label" translatable="false">0 time Ago</string>
     <string name="product_name_label">Αυτό ειναι το όνοπα προϊοντος</string>
-    <string name="product_disc_label">"Αυτή είναι η περιγραφή "</string>
+    <string name="category_name_label">Αυτό ειναι το όνοπα κατηγορίας</string>
+    <string name="product_disc_label">"Αυτή είναι η περιγραφή προϊόντος"</string>
+    <string name="category_disc_label">"Αυτή είναι η περιγραφή "</string>
     <string name="logout_title">Αποσύνδεση</string>
     <string name="home_title">Κεντρική</string>
     <string name="profile_title">Επεξεργασία προφίλ</string>
@@ -92,6 +94,7 @@
     <!-- for Firebase Database reference -->
     <string name="ref_users">Users</string>
     <string name="ref_products">Products</string>
+    <string name="ref_category">Categories</string>
     <string name="ref_tokens">Tokens</string>
     <string name="ref_profileImage">ProfileImage</string>
     <!--for firebase database Users reference -->
@@ -99,16 +102,9 @@
     <string name="ref_users_username">username</string>
     <string name="ref_users_street">street</string>
     <string name="ref_users_floor">floor</string>
-    <!-- for firebase database Posts reference -->
-    <string name="ref_posts_completed">completed</string>
-    <string name="ref_posts_id_of_shop">idOfShop</string>
-    <string name="ref_posts_on_my_way">onMyWay</string>
-    <string name="ref_posts_postdate">postDate</string>
-    <string name="ref_posts_user_profile_image_url">userProfileImageUrl</string>
-    <string name="ref_posts_post_desc">postDesc</string>
-    <string name="ref_posts_username">username</string>
-    <string name="ref_posts_id_of_user">idOfUser</string>
-    <string name="ref_post_username_of_on_my_way">onMyWayUsername</string>
-    <string name="ref_post_completed_date">completedDate</string>
-    <string name="ref_post_street">street</string>
+    <!-- for firebase database Categories reference -->
+    <string name="ref_category_user_profile_image_url">categoryImageUrl</string>
+    <string name="ref_category_desc">categoryDesc</string>
+    <string name="ref_category_name">categoryName</string>
+    <string name="ref_category_id">CategoryId</string>
 </resources>

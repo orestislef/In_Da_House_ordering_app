@@ -12,8 +12,10 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -31,8 +33,10 @@ import com.squareup.picasso.Picasso;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import gr.indahouse.utils.MyViewHolder;
-import gr.indahouse.utils.Product;
+import gr.indahouse.utils.Categories;
+import gr.indahouse.utils.CategoryViewHolder;
+import gr.indahouse.utils.Products;
+import gr.indahouse.utils.ProductViewHolder;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -42,13 +46,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavigationView navigationView;
     FirebaseAuth mAuth;
     FirebaseUser mUser;
-    DatabaseReference mDatabaseRef, mUserRef, mProductRef, mTokenRef;
-    String profileImageUrlV, usernameV, streetV, floorV, tokenV;
+    DatabaseReference mDatabaseRef, mUserRef, mProductRef, mCategoryRef;
+    String profileImageUrlV, usernameV, streetV, floorV;
     CircleImageView profileImageViewHeader;
     TextView usernameHeader;
     ProgressDialog mLoadingBar;
-    FirebaseRecyclerAdapter<Product, MyViewHolder> adapter;
-    FirebaseRecyclerOptions<Product> options;
+    FirebaseRecyclerAdapter<Products, ProductViewHolder> productAdapter;
+    FirebaseRecyclerOptions<Products> productOptions;
+    FirebaseRecyclerAdapter<Categories, CategoryViewHolder> categoryAdapter;
+    FirebaseRecyclerOptions<Categories> categoryOptions;
+
     RecyclerView recyclerView;
 
     @Override
@@ -69,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDatabaseRef = FirebaseDatabase.getInstance().getReference();
         mUserRef = FirebaseDatabase.getInstance().getReference().child(getString(R.string.ref_users));
         mProductRef = FirebaseDatabase.getInstance().getReference().child(getString(R.string.ref_products));
-        mTokenRef = FirebaseDatabase.getInstance().getReference().child(getString(R.string.ref_tokens));
+        mCategoryRef = FirebaseDatabase.getInstance().getReference().child(getString(R.string.ref_category));
 
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navView);
@@ -86,11 +93,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //init LineaLayoutManager
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, true);
-        linearLayoutManager.setStackFromEnd(true);
-        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(false);
+        linearLayoutManager.setReverseLayout(false);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        //Listener for new post to scroll to top recyclerView.smoothScrollToPosition((int) snapshot.getChildrenCount());
+        //Listener for new products to scroll to top recyclerView.smoothScrollToPosition((int) snapshot.getChildrenCount());
         mProductRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -102,8 +109,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
+        //Listener for new categories to scroll to top recyclerView.smoothScrollToPosition((int) snapshot.getChildrenCount());
+        mCategoryRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                recyclerView.smoothScrollToPosition((int) snapshot.getChildrenCount());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
+    //Navigation draw
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -144,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(intent);
             finish();
         } else {
-            //fetching local variables profileImageUrlV, usernameV, streetV, floorV, tokenV
+            //fetching local variables profileImageUrlV, usernameV, streetV, floorV
             mUserRef.child(Objects.requireNonNull(mAuth.getUid())).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -158,9 +179,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         usernameHeader.setText(usernameV);
                         Picasso.get().load(profileImageUrlV).placeholder(R.drawable.ic_baseline_person_24).resize(250, 250).centerInside().into(profileImageViewHeader);
 
-
+                        loadCategories();
                         /*loadProducts();*/
-
                     }
                 }
 
@@ -171,4 +191,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             });
         }
     }
+
+    public void loadCategories() {
+        categoryOptions = new FirebaseRecyclerOptions.Builder<Categories>().setQuery(Objects.requireNonNull(mCategoryRef), Categories.class).build();
+
+        categoryAdapter = new FirebaseRecyclerAdapter<Categories, CategoryViewHolder>(categoryOptions) {
+            @NonNull
+            @Override
+            public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.single_view_category, parent, false);
+                return new CategoryViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull CategoryViewHolder holder, int position, @NonNull Categories model) {
+                Log.d(TAG, "onBindViewHolder: " + position + " " + model.getCategoryName() + "\t" + model.getCategoryImageUrl());
+                holder.catName.setText(model.getCategoryName());
+                holder.catDescription.setText(model.getCategoryDesc());
+                Picasso.get().load(model.getCategoryImageUrl()).placeholder(R.drawable.ic_baseline_local_cafe_24).resize(250, 250).centerInside().into(holder.catProfileImage);
+            }
+        };
+        categoryAdapter.startListening();
+        recyclerView.setAdapter(categoryAdapter);
+        Log.d(TAG, "onDataChange: CategoryAdapterStartsListening");
+    }
+
 }

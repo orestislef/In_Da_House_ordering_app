@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/single_view_product_constraint"
+    android:id="@+id/single_view_category_constraint"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/singleProductCardView"
+        android:id="@+id/singleCategoryCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -16,6 +16,7 @@
         android:layout_marginBottom="8dp"
         android:elevation="4dp"
         app:cardCornerRadius="10dp"
+        app:cardUseCompatPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,7 +27,7 @@
             android:layout_height="match_parent">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/productImage"
+                android:id="@+id/categoryImage"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_marginStart="8dp"
@@ -38,31 +39,31 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/productName"
+                android:id="@+id/categoryName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="@string/product_name_label"
+                android:text="@string/category_name_label"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/productImage"
-                app:layout_constraintTop_toTopOf="@+id/productImage" />
+                app:layout_constraintStart_toEndOf="@+id/categoryImage"
+                app:layout_constraintTop_toTopOf="@+id/categoryImage" />
 
             <TextView
-                android:id="@+id/productDescription"
+                android:id="@+id/categoryDescription"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
                 android:lineSpacingExtra="2dp"
-                android:text="@string/product_disc_label"
+                android:text="@string/category_disc_label"
                 android:textStyle="normal|bold"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/productName"
-                app:layout_constraintStart_toStartOf="@+id/productName"
-                app:layout_constraintTop_toBottomOf="@+id/productName" />
+                app:layout_constraintEnd_toEndOf="@+id/categoryName"
+                app:layout_constraintStart_toStartOf="@+id/categoryName"
+                app:layout_constraintTop_toBottomOf="@+id/categoryName" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
