@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "966670476526",
+    "firebase_url": "https://indahouse-cbe36-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "indahouse-cbe36",
+    "storage_bucket": "indahouse-cbe36.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:966670476526:android:3c97ca26fbb55624debfff",
+        "android_client_info": {
+          "package_name": "gr.indahouse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "966670476526-q7qkdcnpf6vgd8gvs1ac9osabh9nmoc7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbLfq8V5huRZcHA5IQ-3NkPWn8l6oD3C0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "966670476526-q7qkdcnpf6vgd8gvs1ac9osabh9nmoc7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
