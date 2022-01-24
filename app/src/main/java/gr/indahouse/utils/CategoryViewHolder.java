@@ -1,6 +1,7 @@
 package gr.indahouse.utils;
 
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ public class CategoryViewHolder extends RecyclerView.ViewHolder{
     public TextView catName, catDescription;
     public CardView catCardView;
     public ConstraintLayout singleViewCategoryConstraint;
+    public ImageButton deleteBtn;
 
     public CategoryViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -27,5 +29,6 @@ public class CategoryViewHolder extends RecyclerView.ViewHolder{
         catName = itemView.findViewById(R.id.categoryName);
         catDescription = itemView.findViewById(R.id.categoryDescription);
         catCardView = itemView.findViewById(R.id.singleCategoryCardView);
+        deleteBtn = itemView.findViewById(R.id.deleteCategoryButton);
     }
 }

@@ -1,33 +1,25 @@
 package gr.indahouse.utils;
 
 public class Products {
-    private String idOfProduct, productImageUrl, productName, productDesc, productPrice;
+    private String productId, productImageUrl, productName, productDesc, productPrice;
 
     public Products() {
     }
 
-    public Products(String idOfProduct, String productDesc, String productImageUrl, String productName, String productPrice) {
-        this.idOfProduct = idOfProduct;
+    public Products(String productId, String productDesc, String productImageUrl, String productName, String productPrice) {
+        this.productId = productId;
         this.productDesc = productDesc;
         this.productImageUrl = productImageUrl;
         this.productName = productName;
         this.productPrice = productPrice;
     }
 
-    public String getIdOfProduct() {
-        return idOfProduct;
+    public String getProductId() {
+        return productId;
     }
 
-    public void setIdOfProduct(String idOfProduct) {
-        this.idOfProduct = idOfProduct;
-    }
-
-    public String getProductDesc() {
-        return productDesc;
-    }
-
-    public void setProductDesc(String productDesc) {
-        this.productDesc = productDesc;
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
     public String getProductImageUrl() {
@@ -46,11 +38,19 @@ public class Products {
         this.productName = productName;
     }
 
+    public String getProductDesc() {
+        return productDesc;
+    }
+
+    public void setProductDesc(String productDesc) {
+        this.productDesc = productDesc;
+    }
+
     public String getProductPrice() {
         return productPrice;
     }
 
     public void setProductPrice(String productPrice) {
-        this.productPrice = productPrice+"€";
+        this.productPrice = productPrice + "€";
     }
 }

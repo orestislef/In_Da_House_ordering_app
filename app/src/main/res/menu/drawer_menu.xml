@@ -12,6 +12,12 @@
             android:icon="@drawable/ic_baseline_person_24"
             android:title="@string/profile_title" />
 
+        <item
+            android:id="@+id/admin"
+            android:icon="@drawable/ic_baseline_settings_24"
+            android:title="@string/profile_title" />
+
+
     </group>
 
     <item

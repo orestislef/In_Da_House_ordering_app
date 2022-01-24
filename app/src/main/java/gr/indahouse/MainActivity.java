@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mProductRef = FirebaseDatabase.getInstance().getReference().child(getString(R.string.ref_products));
         mCategoryRef = FirebaseDatabase.getInstance().getReference().child(getString(R.string.ref_category));
 
+        //init Views
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navView);
         recyclerView = findViewById(R.id.recyclerView);
@@ -135,6 +136,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.profile:
                 //starting ProfileActivity to edit users profile
                 startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                break;
+            case R.id.admin:
+                //starting ProfileActivity to edit users profile
+                startActivity(new Intent(MainActivity.this, AdminActivity.class));
                 break;
             case R.id.logout:
                 //log-out
@@ -217,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onClick(View v) {
                         Log.d(TAG, "onClick: categoryId: " + model.getCategoryId());
-                        loadProducts(model.getCategoryId());
+                        loadProducts(model.getCategoryId(), model.getCategoryName());
                     }
                 });
             }
@@ -227,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.d(TAG, "onDataChange: CategoryAdapterStartsListening");
     }
 
-    private void loadProducts(String categoryID) {
+    private void loadProducts(String categoryID, String categoryName) {
         productOptions = new FirebaseRecyclerOptions.Builder<Products>().setQuery(mProductRef.orderByChild(getString(R.string.ref_category_id)).equalTo(categoryID), Products.class).build();
 
         productAdapter = new FirebaseRecyclerAdapter<Products, ProductViewHolder>(productOptions) {
@@ -236,6 +241,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.d(TAG, "onBindViewHolderProduct: " + position + " " + model.getProductName() + "\t" + model.getProductPrice());
                 holder.prodName.setText(model.getProductName());
                 holder.prodPrice.setText(model.getProductPrice());
+
+                holder.singleViewProductConstraint.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        loadProductDetailsDialog(model.getProductId());
+                        categoryAdapter.stopListening();
+                    }
+                });
             }
 
             @NonNull
@@ -249,12 +262,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(productAdapter);
         Log.d(TAG, "onDataChange: ProductAdapterStartsListening");
 
-        toolbar.setTitle(categoryID);
+        toolbar.setTitle(categoryName);
         toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                productAdapter.stopListening();
                 loadCategories();
+                setSupportActionBar(toolbar);
+            }
+        });
+    }
+
+    private void loadProductDetailsDialog(String idOfProduct) {
+        mProductRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d(TAG, "onDataChange: " + idOfProduct);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/single_view_category_constraint"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -64,6 +65,20 @@
                 app:layout_constraintEnd_toEndOf="@+id/categoryName"
                 app:layout_constraintStart_toStartOf="@+id/categoryName"
                 app:layout_constraintTop_toBottomOf="@+id/categoryName" />
+
+            <ImageButton
+                android:background="@null"
+                android:src="@drawable/ic_baseline_delete_24"
+                android:id="@+id/deleteCategoryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="4dp"
+                android:text="@string/delete_label"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:contentDescription="@string/delete_label" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

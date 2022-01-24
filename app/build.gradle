@@ -33,6 +33,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:+'
     implementation 'com.google.android.material:material:+'
     implementation 'androidx.constraintlayout:constraintlayout:+'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:+'
     androidTestImplementation 'androidx.test.espresso:espresso-core:+'

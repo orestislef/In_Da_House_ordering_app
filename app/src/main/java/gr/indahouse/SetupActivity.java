@@ -20,8 +20,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -52,15 +50,12 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     private static final int REQUEST_CODE = 101;
     private static final String TAG = "SetupActivity";
     CircleImageView profileImageView;
-    RadioGroup inputProfession;
-    RadioButton rbInputProfessionShop, rbInputProfessionDelivery;
     Button btnSave, getLocationBtn;
     Uri imageUri;
     FirebaseAuth mAuth;
     FirebaseUser mUser;
     DatabaseReference mUserRef;
     StorageReference storageRef;
-    String profession;
     ProgressDialog mLoadingBar;
     Toolbar toolbar;
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -143,18 +138,18 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void attemptToSaveData(String profession) {
+    private void attemptToSaveData() {
         //Function to Save Data to FirebaseDatabase under "Users" with key mAuth <-key
         String username = Objects.requireNonNull(inputUsername.getEditText()).getText().toString();
         String street = Objects.requireNonNull(inputStreet.getEditText()).getText().toString();
-        String flooor = Objects.requireNonNull(inputFloor.getEditText()).getText().toString();
+        String floor = Objects.requireNonNull(inputFloor.getEditText()).getText().toString();
 
         //Check for empty inputs
         if (username.isEmpty() || username.length() < 3) {
             showError(inputUsername, getString(R.string.username_is_not_valid));
         } else if (street.isEmpty() || street.length() < 3) {
             showError(inputStreet, getString(R.string.street_is_not_valid));
-        } else if (flooor.isEmpty() || flooor.length() < 1) {
+        } else if (floor.isEmpty() || floor.length() < 1) {
             showError(inputFloor, getString(R.string.floor_is_not_valid));
         } else if (imageUri == null) {
             Toast.makeText(this, getString(R.string.please_select_image_setup), Toast.LENGTH_SHORT).show();
@@ -176,7 +171,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                                 HashMap hashMap = new HashMap();
                                 hashMap.put(getString(R.string.ref_users_username), username);
                                 hashMap.put(getString(R.string.ref_users_street), street);
-                                hashMap.put(getString(R.string.ref_users_floor), flooor);
+                                hashMap.put(getString(R.string.ref_users_floor), floor);
                                 hashMap.put(getString(R.string.ref_users_profileImage), uri.toString());
 
                                 //Saving data from EditTextBoxes to FirebaseDatabase
@@ -270,7 +265,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 builder.show();
                 break;
             case R.id.btnSave:
-                attemptToSaveData(profession);
+                attemptToSaveData();
                 break;
         }
     }
