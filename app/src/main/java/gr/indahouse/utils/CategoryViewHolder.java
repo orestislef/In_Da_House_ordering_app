@@ -19,7 +19,7 @@ public class CategoryViewHolder extends RecyclerView.ViewHolder{
     public TextView catName, catDescription;
     public CardView catCardView;
     public ConstraintLayout singleViewCategoryConstraint;
-    public ImageButton deleteBtn;
+    public ImageButton deleteCatBtn;
 
     public CategoryViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -29,6 +29,6 @@ public class CategoryViewHolder extends RecyclerView.ViewHolder{
         catName = itemView.findViewById(R.id.categoryName);
         catDescription = itemView.findViewById(R.id.categoryDescription);
         catCardView = itemView.findViewById(R.id.singleCategoryCardView);
-        deleteBtn = itemView.findViewById(R.id.deleteCategoryButton);
+        deleteCatBtn = itemView.findViewById(R.id.deleteCategoryButton);
     }
 }

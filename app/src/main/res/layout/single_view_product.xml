@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="24dp"
                 android:layout_marginBottom="8dp"
                 android:text="@string/product_name_label"
                 android:textSize="18sp"
@@ -52,6 +52,20 @@
                 app:layout_constraintBottom_toBottomOf="@+id/productName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/productName" />
+
+            <ImageButton
+                android:id="@+id/deleteProductBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:text="@string/delete_label"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/productName"
+                app:layout_constraintEnd_toStartOf="@+id/productPrice"
+                app:layout_constraintStart_toEndOf="@+id/productName"
+                app:layout_constraintTop_toTopOf="@+id/productName"
+                app:srcCompat="@drawable/ic_baseline_delete_24"
+                tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

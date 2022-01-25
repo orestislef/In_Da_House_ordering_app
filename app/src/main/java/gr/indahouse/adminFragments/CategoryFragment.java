@@ -41,13 +41,13 @@ public class CategoryFragment extends Fragment {
     FirebaseRecyclerOptions<Categories> categoryOptions;
 
     DatabaseReference mCategoryRef;
-    RecyclerView recyclerView;
+    RecyclerView catRecyclerView;
 
     Button addCategoryBtn;
     TextInputLayout newCatName, newCatDesc, newCatImgUrl, editCatName, editCatDesc, editCatImgUrl;
     String catName, catDesc, catImgUrl;
     Long categoriesCount;
-    ImageButton deleteBtn;
+    ImageButton deleteCatBtn;
 
     View view;
 
@@ -74,9 +74,9 @@ public class CategoryFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_category, container, false);
 
         //init Views
-        recyclerView = view.findViewById(R.id.admin_category_recyclerView);
+        catRecyclerView = view.findViewById(R.id.admin_category_recyclerView);
         addCategoryBtn = view.findViewById(R.id.add_category_btn);
-        deleteBtn = view.findViewById(R.id.deleteCategoryButton);
+        deleteCatBtn = view.findViewById(R.id.deleteCategoryButton);
 
         //init references
         mCategoryRef = FirebaseDatabase.getInstance().getReference().child(getString(R.string.ref_category));
@@ -85,7 +85,7 @@ public class CategoryFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, true);
         linearLayoutManager.setStackFromEnd(false);
         linearLayoutManager.setReverseLayout(false);
-        recyclerView.setLayoutManager(linearLayoutManager);
+        catRecyclerView.setLayoutManager(linearLayoutManager);
 
         loadCategories();
 
@@ -100,7 +100,6 @@ public class CategoryFragment extends Fragment {
     }
 
     private void loadCategories() {
-
         categoryOptions = new FirebaseRecyclerOptions.Builder<Categories>().setQuery(Objects.requireNonNull(mCategoryRef), Categories.class).build();
 
         categoryAdapter = new FirebaseRecyclerAdapter<Categories, CategoryViewHolder>(categoryOptions) {
@@ -120,9 +119,9 @@ public class CategoryFragment extends Fragment {
 
 
                 //Do delete button visible
-                holder.deleteBtn.setVisibility(View.VISIBLE);
+                holder.deleteCatBtn.setVisibility(View.VISIBLE);
 
-                holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
+                holder.deleteCatBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
@@ -152,7 +151,7 @@ public class CategoryFragment extends Fragment {
             }
         };
         categoryAdapter.startListening();
-        recyclerView.setAdapter(categoryAdapter);
+        catRecyclerView.setAdapter(categoryAdapter);
         Log.d(TAG, "onDataChange: CategoryAdapterStartsListening");
     }
 
@@ -188,7 +187,7 @@ public class CategoryFragment extends Fragment {
         editCatDesc = editCategoryDialogView.findViewById(R.id.edit_category_desc_layout);
         editCatImgUrl = editCategoryDialogView.findViewById(R.id.edit_category_img_url_layout);
 
-        //Put values into editTexes
+        //Put values into editTexts
         Objects.requireNonNull(editCatName.getEditText()).setText(categoryName);
         Objects.requireNonNull(editCatDesc.getEditText()).setText(categoryDesc);
         Objects.requireNonNull(editCatImgUrl.getEditText()).setText(categoryImageUrl);
@@ -196,8 +195,7 @@ public class CategoryFragment extends Fragment {
         editCategoryDialogView.findViewById(R.id.edit_category_ok).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditCategory(id, categoryPosition);
-                editCategoryDialog.dismiss();
+                EditCategory(id, categoryPosition,editCategoryDialog);
             }
         });
         editCategoryDialogView.findViewById(R.id.edit_category_cancel).setOnClickListener(new View.OnClickListener() {
@@ -266,31 +264,48 @@ public class CategoryFragment extends Fragment {
         field.requestFocus();
     }
 
-    private void EditCategory(String categoryId, String categoryPosition) {
+    private void EditCategory(String categoryId, String categoryPosition, AlertDialog editCategoryDialog) {
+        //Check if valid values
+        if (Objects.requireNonNull(editCatName.getEditText()).getText().toString().isEmpty()) {
+            showError(editCatName, getString(R.string.name_is_not_valid));
+        } else if (Objects.requireNonNull(editCatDesc.getEditText()).getText().toString().isEmpty()) {
+            showError(editCatDesc, getString(R.string.desc_is_not_valid));
+        } else if (Objects.requireNonNull(editCatImgUrl.getEditText()).getText().toString().isEmpty()) {
+            AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+            alertDialog.setTitle(getString(R.string.alertdialog_title_image_not_valid_label));
+            alertDialog.setMessage(getString(R.string.alertdialog_message_image_not_valid_label));
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+        } else {
+            //Get the Values
+            catName = Objects.requireNonNull(editCatName.getEditText()).getText().toString();
+            catDesc = Objects.requireNonNull(editCatDesc.getEditText()).getText().toString();
+            catImgUrl = Objects.requireNonNull(editCatImgUrl.getEditText()).getText().toString();
 
-        //Get the Values
-        catName = Objects.requireNonNull(editCatName.getEditText()).getText().toString();
-        catDesc = Objects.requireNonNull(editCatDesc.getEditText()).getText().toString();
-        catImgUrl = Objects.requireNonNull(editCatImgUrl.getEditText()).getText().toString();
+            //Get unique key ID
+            String key = mCategoryRef.child(categoryId).getKey();
+            Log.d(TAG, "EditCategory: key: " + key);
 
-        //Get unique key ID
-        String key = mCategoryRef.child(categoryId).getKey();
-        Log.d(TAG, "EditCategory: key: " + key);
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put(getString(R.string.ref_category_id), key);
+            hashMap.put(getString(R.string.ref_category_position), categoryPosition);
+            hashMap.put(getString(R.string.ref_category_name), catName);
+            hashMap.put(getString(R.string.ref_category_desc), catDesc);
+            hashMap.put(getString(R.string.ref_category_image_url), catImgUrl);
 
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put(getString(R.string.ref_category_id), key);
-        hashMap.put(getString(R.string.ref_category_position), categoryPosition);
-        hashMap.put(getString(R.string.ref_category_name), catName);
-        hashMap.put(getString(R.string.ref_category_desc), catDesc);
-        hashMap.put(getString(R.string.ref_category_image_url), catImgUrl);
-
-
-        mCategoryRef.child(key).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
-            @Override
-            public void onSuccess(Object o) {
-                Toast.makeText(getContext(), getString(R.string.successful_add_of_category), Toast.LENGTH_SHORT).show();
-            }
-        });
+            mCategoryRef.child(key).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
+                @Override
+                public void onSuccess(Object o) {
+                    Toast.makeText(getContext(), getString(R.string.successful_edit_of_category), Toast.LENGTH_SHORT).show();
+                    editCategoryDialog.dismiss();
+                }
+            });
+        }
 
     }
 

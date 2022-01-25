@@ -1,17 +1,26 @@
 package gr.indahouse.utils;
 
 public class Products {
-    private String productId, productImageUrl, productName, productDesc, productPrice;
+    private String productId, productImageUrl, productName, productDesc, productPrice, productCategoryId;
 
     public Products() {
     }
 
-    public Products(String productId, String productDesc, String productImageUrl, String productName, String productPrice) {
+    public Products(String productId, String productDesc, String productImageUrl, String productName, String productPrice, String productCategoryId) {
         this.productId = productId;
         this.productDesc = productDesc;
         this.productImageUrl = productImageUrl;
         this.productName = productName;
         this.productPrice = productPrice;
+        this.productCategoryId = productCategoryId;
+    }
+
+    public String getProductCategoryId() {
+        return productCategoryId;
+    }
+
+    public void setProductCategoryId(String productCategoryId) {
+        this.productCategoryId = productCategoryId;
     }
 
     public String getProductId() {

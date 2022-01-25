@@ -1,6 +1,7 @@
 package gr.indahouse;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -56,7 +57,6 @@ public class ProfileActivity extends AppCompatActivity {
     FirebaseUser mUser;
     StorageReference storageRef;
     Uri imageUri;
-    String profileImageUrlV, usernameV, streetV, areaV, professionV;
 
     ProgressDialog mLoadingBar;
     Toolbar toolbar;
@@ -82,7 +82,6 @@ public class ProfileActivity extends AppCompatActivity {
         inputFloor = findViewById(R.id.inputFloor);
         btnUpdate = findViewById(R.id.btnUpdate);
         getLocationBtn = findViewById(R.id.getLocationBtn);
-
 
         //init loadingBar
         mLoadingBar = new ProgressDialog(this);
@@ -227,4 +226,26 @@ public class ProfileActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            imageUri = data.getData();
+            profileImageView.setImageURI(imageUri);
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        //Retrieving text if screen rotates and putting it back to where it belongs
+        profileImageView.setImageURI(savedInstanceState.getParcelable("input_setup_image_uri_key"));
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //When rotate save instance to reText fields onCreate
+        outState.putParcelable("input_setup_image_uri_key", imageUri);
+    }
 }

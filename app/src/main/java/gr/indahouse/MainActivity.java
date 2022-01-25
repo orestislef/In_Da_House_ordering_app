@@ -233,7 +233,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void loadProducts(String categoryID, String categoryName) {
-        productOptions = new FirebaseRecyclerOptions.Builder<Products>().setQuery(mProductRef.orderByChild(getString(R.string.ref_category_id)).equalTo(categoryID), Products.class).build();
+        productOptions = new FirebaseRecyclerOptions.Builder<Products>().setQuery(mProductRef.orderByChild(getString(R.string.ref_product_category_id)).equalTo(categoryID), Products.class)
+                .build();
 
         productAdapter = new FirebaseRecyclerAdapter<Products, ProductViewHolder>(productOptions) {
             @Override
