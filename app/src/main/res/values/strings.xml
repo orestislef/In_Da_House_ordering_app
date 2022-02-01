@@ -165,18 +165,24 @@
 
     <!-- for showError products -->
     <string name="price_is_not_valid">Η τιμή δεν ειναι Σωστή</string>
-    <string name="product_category_id_is_not_valid">Η κατηνορία δεν ειναι Σωστή</string>
+    <string name="product_category_id_is_not_valid">Δεν επιλέξατε κατηγορία</string>
 
     <!--for alertDialog categories -->
     <string name="alertdialog_title_image_not_valid_label">Δεν έχετε επιλέξει εικόνα</string>
     <string name="alertdialog_message_image_not_valid_label">Δεν έχετε βάλει καποιο link για εικόνα</string>
     <string name="are_you_sure_to_delete_category_title_label">Προσοχή</string>
-    <string name="are_you_sure_to_delete_category_message_label">Είστε σίγουροι οτι θέλετε να διαγράψετε την κατηγορία;</string>
+    <string name="are_you_sure_to_delete_category_message_label">Είστε σίγουροι οτι θέλετε να διαγράψετε την κατηγορία</string>
+    <string name="are_you_sure_to_delete_category_items_message_label">Είστε σίγουροι οτι θέλετε να διαγράψετε το προϊόν</string>
+    <string name="are_you_sure_to_delete_product_from_category_message_label">Υπαρχουν προιόντα στην κατηγορία</string>
+    <string name="are_you_sure_to_delete_product_items_message_label">Διαγραφή του προϊόν </string>
+    <string name="owns_at_category_name_label">που ανήκει στην κατηγορία</string>
+
+
+
 
     <!--for alertDialog products -->
     <string name="are_you_sure_to_delete_product_title_label">Προσοχή</string>
     <string name="are_you_sure_to_delete_product_message_label">Είστε σίγουροι οτι θέλετε να διαγράψετε το προϊόν;</string>
-
 
 
 </resources>

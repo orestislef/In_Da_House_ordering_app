@@ -1,6 +1,10 @@
 package gr.indahouse.utils;
 
+import static java.security.AccessController.getContext;
+
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -9,6 +13,7 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import gr.indahouse.AdminActivity;
 import gr.indahouse.R;
 
 public class ProductViewHolder extends RecyclerView.ViewHolder {
@@ -29,6 +34,6 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
         prodCategoryId = itemView.findViewById(R.id.edit_product_category_id);
         prodCardView = itemView.findViewById(R.id.singleProductCardView);
         deleteBtn = itemView.findViewById(R.id.deleteProductBtn);
-
     }
+
 }

@@ -40,7 +40,7 @@ public class CategoryFragment extends Fragment {
     FirebaseRecyclerAdapter<Categories, CategoryViewHolder> categoryAdapter;
     FirebaseRecyclerOptions<Categories> categoryOptions;
 
-    DatabaseReference mCategoryRef;
+    DatabaseReference mCategoryRef, mProductRef;
     RecyclerView catRecyclerView;
 
     Button addCategoryBtn;
@@ -80,6 +80,7 @@ public class CategoryFragment extends Fragment {
 
         //init references
         mCategoryRef = FirebaseDatabase.getInstance().getReference().child(getString(R.string.ref_category));
+        mProductRef = FirebaseDatabase.getInstance().getReference().child(getString(R.string.ref_products));
 
         //init LineaLayoutManager
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, true);
@@ -124,10 +125,12 @@ public class CategoryFragment extends Fragment {
                 holder.deleteCatBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        showAlertDialogDelete(model.getCategoryId());
+
                         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
                         dialog.setTitle(getString(R.string.are_you_sure_to_delete_category_title_label))
                                 .setIcon(R.drawable.ic_baseline_delete_24)
-                                .setMessage(getString(R.string.are_you_sure_to_delete_category_message_label))
+                                .setMessage(getString(R.string.are_you_sure_to_delete_category_message_label) + " " + model.getCategoryName() + ";")
                                 .setNegativeButton(getString(R.string.cancel_admin_btn_label), new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialoginterface, int i) {
                                         dialoginterface.cancel();
@@ -136,6 +139,7 @@ public class CategoryFragment extends Fragment {
                                 .setPositiveButton(getString(R.string.delete_label), new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialoginterface, int i) {
                                         mCategoryRef.child(model.getCategoryId()).removeValue();
+
                                     }
                                 }).show();
                     }
@@ -195,7 +199,7 @@ public class CategoryFragment extends Fragment {
         editCategoryDialogView.findViewById(R.id.edit_category_ok).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditCategory(id, categoryPosition,editCategoryDialog);
+                EditCategory(id, categoryPosition, editCategoryDialog);
             }
         });
         editCategoryDialogView.findViewById(R.id.edit_category_cancel).setOnClickListener(new View.OnClickListener() {
@@ -307,6 +311,45 @@ public class CategoryFragment extends Fragment {
             });
         }
 
+    }
+
+    public void showAlertDialogDelete(String categoryId) {
+        mProductRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot categorySnapshot : snapshot.getChildren()) {
+                    Log.d(TAG, "onDataChange: test321 " + Objects.equals(categorySnapshot.child(getString(R.string.ref_product_category_id)).getValue(), categoryId));
+                    if (Objects.equals(categorySnapshot.child(getString(R.string.ref_product_category_id)).getValue(), categoryId)) {
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                        dialog.setTitle(getString(R.string.are_you_sure_to_delete_product_from_category_message_label))
+                                .setIcon(R.drawable.ic_baseline_delete_24)
+                                .setMessage(getString(R.string.are_you_sure_to_delete_product_items_message_label)
+                                        + " "
+                                        + categorySnapshot.child(getString(R.string.ref_product_name)).getValue()
+                                        +" "
+                                        + getString(R.string.owns_at_category_name_label)
+                                        + ";"
+                                )
+                                .setNegativeButton(getString(R.string.cancel_admin_btn_label), new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialoginterface, int i) {
+                                        dialoginterface.cancel();
+                                    }
+                                })
+                                .setPositiveButton(getString(R.string.delete_label), new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialoginterface, int i) {
+                                        categorySnapshot.getRef().removeValue();
+                                    }
+                                }).show();
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     @Override

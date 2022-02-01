@@ -13,6 +13,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -21,10 +24,15 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import gr.indahouse.R;
@@ -37,15 +45,23 @@ public class ProductFragment extends Fragment {
     FirebaseRecyclerAdapter<Products, ProductViewHolder> productsAdapter;
     FirebaseRecyclerOptions<Products> productsOptions;
 
-    DatabaseReference mProductsRef;
+    DatabaseReference mProductsRef, mCategoryRef;
     RecyclerView prodRecyclerView;
 
     Button addProductBtn;
-    TextInputLayout newProdName, newProdPrice, newProdCategoryId, editProdName, editProdPrice, editProdCategoryId;
-    String prodName, prodPrice, prodCategoryId;
+    TextInputLayout newProdNameTL, newProdPriceTL, newProdCategoryIdTL, editProdNameTL, editProdPriceTL, editProdCategoryIdTL;
+    String prodNameTL, prodPriceTL, prodCategoryIdTL;
     ImageButton deleteProdBtn;
 
     View view;
+
+    AutoCompleteTextView autoCompleteAddCategoryIdTextView, autoCompleteEditCategoryIdTextView;
+    ArrayAdapter<String> adapterItemsId;
+    ArrayAdapter<String> adapterItemsName;
+    String[] itemsId, itemsName;
+
+    Map<String, String> map = new HashMap<String, String>();
+
 
     public ProductFragment() {
         // Required empty public constructor
@@ -64,7 +80,7 @@ public class ProductFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_product, container, false);
@@ -76,6 +92,7 @@ public class ProductFragment extends Fragment {
 
         //init references
         mProductsRef = FirebaseDatabase.getInstance().getReference().child(getString(R.string.ref_products));
+        mCategoryRef = FirebaseDatabase.getInstance().getReference().child(getString(R.string.ref_category));
 
         //init LinearLayoutManager
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, true);
@@ -149,24 +166,24 @@ public class ProductFragment extends Fragment {
         Log.d(TAG, "onDataChange: ProductAdapterStartsListening: ");
     }
 
-    private void addNewProduct(View addNewProductDialogView, AlertDialog addProductDialog) {
+    private void addNewProduct(@NonNull View addNewProductDialogView, AlertDialog addProductDialog, String newProdCategoryId) {
         //init Views
-        newProdName = addNewProductDialogView.findViewById(R.id.new_product_name_layout);
-        newProdPrice = addNewProductDialogView.findViewById(R.id.new_product_price_layout);
-        newProdCategoryId = addNewProductDialogView.findViewById(R.id.new_product_category_id_layout);
+        newProdNameTL = addNewProductDialogView.findViewById(R.id.new_product_name_layout);
+        newProdPriceTL = addNewProductDialogView.findViewById(R.id.new_product_price_layout);
+        newProdCategoryIdTL = addNewProductDialogView.findViewById(R.id.new_product_category_id_layout);
 
         //Check if valid values
-        if (Objects.requireNonNull(newProdName.getEditText()).getText().toString().isEmpty()) {
-            showError(newProdName, getString(R.string.name_is_not_valid));
-        } else if (Objects.requireNonNull(newProdPrice.getEditText()).getText().toString().isEmpty()) {
-            showError(newProdPrice, getString(R.string.price_is_not_valid));
-        } else if (Objects.requireNonNull(newProdCategoryId.getEditText()).getText().toString().isEmpty()) {
-            //edw na valw na kanei fetch apo tis katigories se dropDownMenu
+        if (Objects.requireNonNull(newProdNameTL.getEditText()).getText().toString().isEmpty()) {
+            showError(newProdNameTL, getString(R.string.name_is_not_valid));
+        } else if (Objects.requireNonNull(newProdPriceTL.getEditText()).getText().toString().isEmpty()) {
+            showError(newProdPriceTL, getString(R.string.price_is_not_valid));
+        } else if (Objects.requireNonNull(newProdCategoryIdTL.getEditText()).getText().toString().isEmpty()) {
+            showError(newProdCategoryIdTL, getString(R.string.product_category_id_is_not_valid));
         } else {
             //Get the Values
-            prodName = Objects.requireNonNull(newProdName.getEditText()).getText().toString();
-            prodPrice = Objects.requireNonNull(newProdPrice.getEditText()).getText().toString();
-            prodCategoryId = Objects.requireNonNull(newProdCategoryId.getEditText()).getText().toString();
+            prodNameTL = Objects.requireNonNull(newProdNameTL.getEditText()).getText().toString();
+            prodPriceTL = Objects.requireNonNull(newProdPriceTL.getEditText()).getText().toString();
+            prodCategoryIdTL = newProdCategoryId;
 
             //Get unique key ID
             String key = mProductsRef.push().getKey();
@@ -175,15 +192,15 @@ public class ProductFragment extends Fragment {
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put(getString(R.string.ref_product_id), key);
 //            hashMap.put(getString(R.string.ref_category_position), categoriesCount.toString());
-            hashMap.put(getString(R.string.ref_product_name), prodName);
-            hashMap.put(getString(R.string.ref_product_price), prodPrice);
-            hashMap.put(getString(R.string.ref_product_category_id), prodCategoryId);
+            hashMap.put(getString(R.string.ref_product_name), prodNameTL);
+            hashMap.put(getString(R.string.ref_product_price), prodPriceTL);
+            hashMap.put(getString(R.string.ref_product_category_id), prodCategoryIdTL);
 
 
             mProductsRef.child(key).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
                 @Override
                 public void onSuccess(Object o) {
-                    Toast.makeText(getContext(), getString(R.string.successful_add_of_category), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.successful_add_of_product), Toast.LENGTH_SHORT).show();
                     addProductDialog.dismiss();
                 }
             });
@@ -191,26 +208,36 @@ public class ProductFragment extends Fragment {
 
     }
 
-    private void showError(TextInputLayout field, String text) {
-        field.setError(text);
-        field.requestFocus();
-    }
-
     private void showAddProductDialog() {
+        final String[] addNewProdCategoryId = {null};
+
         LayoutInflater factory = LayoutInflater.from(getContext());
         final View addNewProductDialogView = factory.inflate(R.layout.add_product, null);
         final AlertDialog addProductDialog = new AlertDialog.Builder(getContext()).create();
         addProductDialog.setView(addNewProductDialogView);
+
+        autoCompleteAddCategoryIdTextView = addNewProductDialogView.findViewById(R.id.new_product_category_id);
+        adapterItemsId = new ArrayAdapter<>(getContext(), R.layout.category_list_item, itemsName);
+        autoCompleteAddCategoryIdTextView.setAdapter(adapterItemsId);
+
         addNewProductDialogView.findViewById(R.id.add_product_ok).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addNewProduct(addNewProductDialogView, addProductDialog);
+                addNewProduct(addNewProductDialogView, addProductDialog, addNewProdCategoryId[0]);
             }
         });
         addNewProductDialogView.findViewById(R.id.add_product_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addProductDialog.dismiss();
+            }
+        });
+
+        //Change Name of category id To id of category
+        autoCompleteAddCategoryIdTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                addNewProdCategoryId[0] = itemsId[position];
             }
         });
 
@@ -221,26 +248,40 @@ public class ProductFragment extends Fragment {
         //replace euro sing
         productPrice = productPrice.replaceAll("€", "");
 
+        final String[] editProdCategoryId = {null};
+
         LayoutInflater factory = LayoutInflater.from(getContext());
         final View editProductDialogView = factory.inflate(R.layout.edit_product, null);
         final AlertDialog editProductDialog = new AlertDialog.Builder(getContext()).create();
         editProductDialog.setView(editProductDialogView);
 
-        //init Views
-        editProdName = editProductDialogView.findViewById(R.id.edit_product_name_layout);
-        editProdPrice = editProductDialogView.findViewById(R.id.edit_product_price_layout);
-        editProdCategoryId = editProductDialogView.findViewById(R.id.edit_product_category_id_layout);
+        autoCompleteEditCategoryIdTextView = editProductDialogView.findViewById(R.id.edit_product_category_id);
+        adapterItemsId = new ArrayAdapter<>(getContext(), R.layout.category_list_item, itemsName);
+        autoCompleteEditCategoryIdTextView.setText(map.get(productCategoryId));
+        autoCompleteEditCategoryIdTextView.setAdapter(adapterItemsId);
 
+
+        //init Views
+        editProdNameTL = editProductDialogView.findViewById(R.id.edit_product_name_layout);
+        editProdPriceTL = editProductDialogView.findViewById(R.id.edit_product_price_layout);
+        editProdCategoryIdTL = editProductDialogView.findViewById(R.id.edit_product_category_id_layout);
 
         //Put values into editTexts
-        Objects.requireNonNull(editProdName.getEditText()).setText(productName);
-        Objects.requireNonNull(editProdPrice.getEditText()).setText(productPrice);
-        Objects.requireNonNull(editProdCategoryId.getEditText()).setText(productCategoryId);
+        Objects.requireNonNull(editProdNameTL.getEditText()).setText(productName);
+        Objects.requireNonNull(editProdPriceTL.getEditText()).setText(productPrice);
+
+        //Change Name of category id To id of category
+        autoCompleteEditCategoryIdTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                editProdCategoryId[0] = itemsId[position];
+            }
+        });
 
         editProductDialogView.findViewById(R.id.edit_product_ok).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditProduct(productId, editProductDialog);
+                EditProduct(productId, editProductDialog, editProdCategoryId[0]);
             }
         });
         editProductDialogView.findViewById(R.id.edit_product_cancel).setOnClickListener(new View.OnClickListener() {
@@ -253,19 +294,18 @@ public class ProductFragment extends Fragment {
 
     }
 
-    private void EditProduct(String productId, AlertDialog editProductDialog) {
+    private void EditProduct(String productId, AlertDialog editProductDialog, String prodCategoryId) {
         //Check if valid values
-        if (Objects.requireNonNull(editProdName.getEditText()).getText().toString().isEmpty()) {
-            showError(editProdName, getString(R.string.name_is_not_valid));
-        } else if (Objects.requireNonNull(editProdPrice.getEditText()).getText().toString().isEmpty()) {
-            showError(editProdPrice, getString(R.string.price_is_not_valid));
-        } else if (Objects.requireNonNull(editProdCategoryId.getEditText()).getText().toString().isEmpty()) {
-            showError(editProdCategoryId, getString(R.string.product_category_id_is_not_valid));
+        if (Objects.requireNonNull(editProdNameTL.getEditText()).getText().toString().isEmpty()) {
+            showError(editProdNameTL, getString(R.string.name_is_not_valid));
+        } else if (Objects.requireNonNull(editProdPriceTL.getEditText()).getText().toString().isEmpty()) {
+            showError(editProdPriceTL, getString(R.string.price_is_not_valid));
+        } else if (Objects.requireNonNull(editProdCategoryIdTL.getEditText()).getText().toString().isEmpty()) {
+            showError(editProdCategoryIdTL, getString(R.string.product_category_id_is_not_valid));
         } else {
             //Get the values
-            prodName = Objects.requireNonNull(editProdName.getEditText()).getText().toString();
-            prodPrice = Objects.requireNonNull(editProdPrice.getEditText()).getText().toString();
-            prodCategoryId = Objects.requireNonNull(editProdCategoryId.getEditText()).getText().toString();
+            prodNameTL = Objects.requireNonNull(editProdNameTL.getEditText()).getText().toString();
+            prodPriceTL = Objects.requireNonNull(editProdPriceTL.getEditText()).getText().toString();
 
             //Get unique key ID
             String key = mProductsRef.child(productId).getKey();
@@ -274,8 +314,8 @@ public class ProductFragment extends Fragment {
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put(getString(R.string.ref_product_id), key);
 //        hashMap.put(getString(R.string.ref_category_position), categoryPosition);
-            hashMap.put(getString(R.string.ref_product_name), prodName);
-            hashMap.put(getString(R.string.ref_product_price), prodPrice);
+            hashMap.put(getString(R.string.ref_product_name), prodNameTL);
+            hashMap.put(getString(R.string.ref_product_price), prodPriceTL);
             hashMap.put(getString(R.string.ref_product_category_id), prodCategoryId);
 
             mProductsRef.child(key).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -287,5 +327,40 @@ public class ProductFragment extends Fragment {
             });
         }
 
+    }
+
+    private void showError(@NonNull TextInputLayout field, String text) {
+        field.setError(text);
+        field.requestFocus();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mCategoryRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                map.clear();
+                for (DataSnapshot categorySnapshot : snapshot.getChildren()) {
+
+                    Log.d(TAG, "onDataChange: Name of Category:" + categorySnapshot.child(getString(R.string.ref_category_name)).getValue());
+                    Log.d(TAG, "onDataChange: key of Category:" + categorySnapshot.child(getString(R.string.ref_category_id)).getValue());
+
+                    map.put(Objects.requireNonNull(categorySnapshot.child(getString(R.string.ref_category_id)).getValue()).toString()
+                            , Objects.requireNonNull(categorySnapshot.child(getString(R.string.ref_category_name)).getValue()).toString());
+                }
+                Log.d(TAG, "onDataChange: testing123" + map);
+                itemsId = map.keySet().toArray(new String[0]);
+                itemsName = map.values().toArray(new String[0]);
+                Log.d(TAG, "onDataChange: testing123" + Arrays.toString(itemsId));
+                Log.d(TAG, "onDataChange: testing123" + Arrays.toString(itemsName));
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }
