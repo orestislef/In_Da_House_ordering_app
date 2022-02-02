@@ -14,14 +14,19 @@ public class AdminFragmentAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        if (position == 1) {
-            return new ProductFragment();
+        switch (position) {
+            case 0:
+                return new CategoryFragment();
+            case 1:
+                return new ProductFragment();
+            case 2 :
+                return new ExtrasFragment();
         }
         return new CategoryFragment();
     }
 
     @Override
     public int getItemCount() {
-        return 2;
+        return 3;
     }
 }

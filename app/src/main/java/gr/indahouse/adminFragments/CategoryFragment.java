@@ -125,23 +125,8 @@ public class CategoryFragment extends Fragment {
                 holder.deleteCatBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showAlertDialogDelete(model.getCategoryId());
-
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
-                        dialog.setTitle(getString(R.string.are_you_sure_to_delete_category_title_label))
-                                .setIcon(R.drawable.ic_baseline_delete_24)
-                                .setMessage(getString(R.string.are_you_sure_to_delete_category_message_label) + " " + model.getCategoryName() + ";")
-                                .setNegativeButton(getString(R.string.cancel_admin_btn_label), new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialoginterface, int i) {
-                                        dialoginterface.cancel();
-                                    }
-                                })
-                                .setPositiveButton(getString(R.string.delete_label), new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialoginterface, int i) {
-                                        mCategoryRef.child(model.getCategoryId()).removeValue();
-
-                                    }
-                                }).show();
+                        showAlertDialogDeleteProductFromCategory(model.getCategoryId(), model.getCategoryName());
+                        ShowAlertDialogDeleteCategory(model.getCategoryId(), model.getCategoryName());
                     }
                 });
 
@@ -313,7 +298,7 @@ public class CategoryFragment extends Fragment {
 
     }
 
-    public void showAlertDialogDelete(String categoryId) {
+    public void showAlertDialogDeleteProductFromCategory(String categoryId, String categoryName) {
         mProductRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -326,7 +311,7 @@ public class CategoryFragment extends Fragment {
                                 .setMessage(getString(R.string.are_you_sure_to_delete_product_items_message_label)
                                         + " "
                                         + categorySnapshot.child(getString(R.string.ref_product_name)).getValue()
-                                        +" "
+                                        + " "
                                         + getString(R.string.owns_at_category_name_label)
                                         + ";"
                                 )
@@ -340,7 +325,6 @@ public class CategoryFragment extends Fragment {
                                         categorySnapshot.getRef().removeValue();
                                     }
                                 }).show();
-
                     }
                 }
             }
@@ -350,6 +334,24 @@ public class CategoryFragment extends Fragment {
 
             }
         });
+    }
+
+    public void ShowAlertDialogDeleteCategory(String categoryId, String categoryName) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+        dialog.setTitle(getString(R.string.are_you_sure_to_delete_category_title_label))
+                .setIcon(R.drawable.ic_baseline_delete_24)
+                .setMessage(getString(R.string.are_you_sure_to_delete_category_message_label) + " " + categoryName + ";")
+                .setNegativeButton(getString(R.string.cancel_admin_btn_label), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialoginterface, int i) {
+                        dialoginterface.cancel();
+                    }
+                })
+                .setPositiveButton(getString(R.string.delete_label), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialoginterface, int i) {
+                        mCategoryRef.child(categoryId).removeValue();
+
+                    }
+                }).show();
     }
 
     @Override

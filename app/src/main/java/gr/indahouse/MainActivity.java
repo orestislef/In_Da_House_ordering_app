@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 holder.singleViewProductConstraint.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        loadProductDetailsDialog(model.getProductId());
+                        loadProductWithExtrasDialog(model.getProductId());
                         categoryAdapter.stopListening();
                     }
                 });
@@ -275,11 +275,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-    private void loadProductDetailsDialog(String idOfProduct) {
+    private void loadProductWithExtrasDialog(String idOfProduct) {
         mProductRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.d(TAG, "onDataChange: " + idOfProduct);
+                Log.d(TAG, "clicked on item with ID: " + idOfProduct);
             }
 
             @Override

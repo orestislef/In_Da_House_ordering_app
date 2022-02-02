@@ -15,6 +15,7 @@ public class AdminActivity extends AppCompatActivity {
     TabLayout adminTabLayout;
     ViewPager2 adminViewPager;
     AdminFragmentAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,11 +26,13 @@ public class AdminActivity extends AppCompatActivity {
         adminViewPager = findViewById(R.id.adminViewPager);
 
         FragmentManager fm = getSupportFragmentManager();
-        adapter = new AdminFragmentAdapter(fm,getLifecycle());
+        adapter = new AdminFragmentAdapter(fm, getLifecycle());
         adminViewPager.setAdapter(adapter);
 
         adminTabLayout.addTab(adminTabLayout.newTab().setText(getString(R.string.category_admin_label)));
         adminTabLayout.addTab(adminTabLayout.newTab().setText(getString(R.string.product_admin_label)));
+        adminTabLayout.addTab(adminTabLayout.newTab().setText(getString(R.string.extras_admin_label)));
+
 
         adminTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

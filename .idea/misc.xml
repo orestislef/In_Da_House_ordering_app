@@ -22,6 +22,7 @@
         <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/layout/activity_setup.xml" value="0.25" />
         <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/layout/activity_splash.xml" value="0.371875" />
         <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/layout/add_category.xml" value="0.371875" />
+        <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/layout/add_extra.xml" value="0.33" />
         <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/layout/add_product.xml" value="0.1" />
         <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/layout/category_list_item.xml" value="0.371875" />
         <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/layout/dialog_bg.xml" value="0.371875" />
@@ -29,9 +30,11 @@
         <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/layout/edit_category.xml" value="0.24479166666666666" />
         <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/layout/edit_product.xml" value="0.1" />
         <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/layout/fragment_category.xml" value="0.25" />
+        <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/layout/fragment_extras.xml" value="0.18085106382978725" />
         <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/layout/fragment_product.xml" value="0.371875" />
         <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/layout/main_appbar.xml" value="0.20885416666666667" />
         <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/layout/single_view_category.xml" value="0.371875" />
+        <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/layout/single_view_extra.xml" value="0.33" />
         <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/layout/single_view_product.xml" value="0.5" />
         <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/menu/drawer_menu.xml" value="0.371875" />
         <entry key="..\:/Users/orest/AndroidStudioProjects/InDaHouse/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.225" />

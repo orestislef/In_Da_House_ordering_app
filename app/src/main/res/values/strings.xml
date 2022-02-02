@@ -57,6 +57,7 @@
     <string name="time_ago_label" translatable="false">0 time Ago</string>
     <string name="product_name_label">Αυτό ειναι το όνοπα προϊοντος</string>
     <string name="category_name_label">Αυτό ειναι το όνοπα κατηγορίας</string>
+    <string name="extra_name_label">Αυτό ειναι το όνοπα κατηγορίας</string>
     <string name="product_disc_label">"Αυτή είναι η περιγραφή προϊόντος"</string>
     <string name="category_disc_label">"Αυτή είναι η περιγραφή "</string>
     <string name="logout_title">Αποσύνδεση</string>
@@ -97,6 +98,7 @@
     <string name="ref_users">Users</string>
     <string name="ref_products">Products</string>
     <string name="ref_category">Categories</string>
+    <string name="ref_extra">Extras</string>
     <string name="ref_profileImage">ProfileImage</string>
     <!--for firebase database Users reference -->
     <string name="ref_users_profileImage">profileImage</string>
@@ -114,12 +116,19 @@
     <string name="ref_product_name">productName</string>
     <string name="ref_product_price">productPrice</string>
     <string name="ref_product_category_id">productCategoryId</string>
+    <!-- for firebase database Extras reference -->
+    <string name="ref_extra_id">extraId</string>
+    <string name="ref_extra_name">extraName</string>
+    <string name="ref_extra_price">productPrice</string>
 
     <!-- for AdminFragment labels -->
     <string name="category_admin_label">Κατηγορίες</string>
     <string name="product_admin_label">Προϊόντα</string>
+    <string name="extras_admin_label">Extras</string>
 
     <string name="cancel_admin_btn_label">Ακύρωση</string>
+    <string name="back_admin_btn_label">Πίσω</string>
+
 
     <!--for add categories hints -->
     <string name="category_name_textInput_hint">Προσθήκη Ονόματος Κατηγορίας</string>
@@ -133,6 +142,11 @@
     <string name="product_category_id_textInput_hint">Προσθήκη Κατηγορίας Προϊόντος</string>
     <string name="successful_edit_of_product">Επιτυχής Ανανέωση Κατηγορίας</string>
 
+    <!--for add extras hints -->
+    <string name="extra_name_textInput_hint">Προσθήκη Ονόματος Extra</string>
+    <string name="extra_price_textInput_hint">Προσθήκη Τιμής Extra</string>
+    <string name="successful_edit_of_extra">Επιτυχής Ανανέωση Extra</string>
+
     <!--for add categories labels -->
     <string name="successful_add_of_category">Επιτυχής Προσθήκη Κατηγορίας</string>
     <string name="category_admin_add_btn_label">Προσθήκη Κατηγορίας</string>
@@ -142,6 +156,11 @@
     <string name="successful_add_of_product">Επιτυχής Προσθήκη προϊόντος</string>
     <string name="product_admin_add_btn_label">Προσθήκη Προϊόντος</string>
     <string name="product_admin_add_btn_ok_label">Προσθήκη Νέου Προϊόντος</string>
+
+    <!--for add extra labels -->
+    <string name="successful_add_of_extra">Επιτυχής Προσθήκη extra</string>
+    <string name="extra_admin_add_btn_label">Προσθήκη extra</string>
+    <string name="extra_admin_add_btn_ok_label">Προσθήκη Νέου extra</string>
 
 
     <!--for edit categories hints -->
@@ -157,6 +176,12 @@
     <string name="edit_product_category_id_textInput_hint">Ανανέωση κατηγορίας που ανηκει το προϊόν</string>
     <string name="edit_successful_add_of_product">Επιτυχής Ανανέωση προϊόντος</string>
     <string name="edit_product_admin_add_btn_ok_label">Ανανέωση προϊόντος</string>
+
+    <!--for edit extras hints-->
+    <string name="edit_extra_name_textInput_hint">Ανανέωση Ονόματος Extra</string>
+    <string name="edit_extra_price_textInput_hint">Ανανέωση Τιμής Extra</string>
+    <string name="edit_successful_add_of_extra">Επιτυχής Ανανέωση Extra</string>
+    <string name="edit_extra_admin_add_btn_ok_label">Ανανέωση Extra</string>
 
     <!-- for showError categories -->
     <string name="name_is_not_valid">Το Όνομα δεν είναι Σωστό</string>
@@ -177,12 +202,12 @@
     <string name="are_you_sure_to_delete_product_items_message_label">Διαγραφή του προϊόν </string>
     <string name="owns_at_category_name_label">που ανήκει στην κατηγορία</string>
 
-
-
-
     <!--for alertDialog products -->
     <string name="are_you_sure_to_delete_product_title_label">Προσοχή</string>
     <string name="are_you_sure_to_delete_product_message_label">Είστε σίγουροι οτι θέλετε να διαγράψετε το προϊόν;</string>
 
+    <!--for alertDialog extras -->
+    <string name="are_you_sure_to_delete_extra_title_label">Προσοχή</string>
+    <string name="are_you_sure_to_delete_extra_message_label">Είστε σίγουροι οτι θέλετε να διαγράψετε το extra;</string>
 
 </resources>

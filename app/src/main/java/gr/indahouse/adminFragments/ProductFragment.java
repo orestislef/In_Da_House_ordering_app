@@ -41,19 +41,18 @@ import gr.indahouse.utils.Products;
 
 public class ProductFragment extends Fragment {
 
-    private static final String TAG = "productFragment";
+    private static final String TAG = "ProductFragment";
     FirebaseRecyclerAdapter<Products, ProductViewHolder> productsAdapter;
     FirebaseRecyclerOptions<Products> productsOptions;
 
     DatabaseReference mProductsRef, mCategoryRef;
+
     RecyclerView prodRecyclerView;
 
     Button addProductBtn;
     TextInputLayout newProdNameTL, newProdPriceTL, newProdCategoryIdTL, editProdNameTL, editProdPriceTL, editProdCategoryIdTL;
     String prodNameTL, prodPriceTL, prodCategoryIdTL;
     ImageButton deleteProdBtn;
-
-    View view;
 
     AutoCompleteTextView autoCompleteAddCategoryIdTextView, autoCompleteEditCategoryIdTextView;
     ArrayAdapter<String> adapterItemsId;
@@ -62,6 +61,7 @@ public class ProductFragment extends Fragment {
 
     Map<String, String> map = new HashMap<String, String>();
 
+    View view;
 
     public ProductFragment() {
         // Required empty public constructor
@@ -130,9 +130,9 @@ public class ProductFragment extends Fragment {
                 holder.prodPrice.setText(model.getProductPrice());
 
                 //Do deleteBtn visible
-                holder.deleteBtn.setVisibility(View.VISIBLE);
+                holder.deleteProdBtn.setVisibility(View.VISIBLE);
 
-                holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
+                holder.deleteProdBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
@@ -191,7 +191,6 @@ public class ProductFragment extends Fragment {
 
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put(getString(R.string.ref_product_id), key);
-//            hashMap.put(getString(R.string.ref_category_position), categoriesCount.toString());
             hashMap.put(getString(R.string.ref_product_name), prodNameTL);
             hashMap.put(getString(R.string.ref_product_price), prodPriceTL);
             hashMap.put(getString(R.string.ref_product_category_id), prodCategoryIdTL);
