@@ -15,14 +15,13 @@ public class AdminFragmentAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         switch (position) {
-            case 0:
-                return new CategoryFragment();
             case 1:
-                return new ProductFragment();
-            case 2 :
-                return new ExtrasFragment();
+                return new AdminProductFragment();
+            case 2:
+                return new AdminExtrasFragment();
+            default:
+                return new AdminCategoryFragment();
         }
-        return new CategoryFragment();
     }
 
     @Override

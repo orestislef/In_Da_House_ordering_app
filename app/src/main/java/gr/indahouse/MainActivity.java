@@ -5,22 +5,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,10 +30,7 @@ import com.squareup.picasso.Picasso;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import gr.indahouse.utils.Categories;
-import gr.indahouse.utils.CategoryViewHolder;
-import gr.indahouse.utils.Products;
-import gr.indahouse.utils.ProductViewHolder;
+import gr.indahouse.menuFragments.MenuFragmentAdapter;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -46,17 +40,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavigationView navigationView;
     FirebaseAuth mAuth;
     FirebaseUser mUser;
-    DatabaseReference mDatabaseRef, mUserRef, mProductRef, mCategoryRef;
+    DatabaseReference mDatabaseRef, mUserRef;
     String profileImageUrlV, usernameV, streetV, floorV;
     CircleImageView profileImageViewHeader;
     TextView usernameHeader;
     ProgressDialog mLoadingBar;
-    FirebaseRecyclerAdapter<Products, ProductViewHolder> productAdapter;
-    FirebaseRecyclerOptions<Products> productOptions;
-    FirebaseRecyclerAdapter<Categories, CategoryViewHolder> categoryAdapter;
-    FirebaseRecyclerOptions<Categories> categoryOptions;
-
-    RecyclerView recyclerView;
+    TabLayout menuTabLayout;
+    ViewPager2 menuViewPager;
+    MenuFragmentAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,13 +66,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mUser = mAuth.getCurrentUser();
         mDatabaseRef = FirebaseDatabase.getInstance().getReference();
         mUserRef = FirebaseDatabase.getInstance().getReference().child(getString(R.string.ref_users));
-        mProductRef = FirebaseDatabase.getInstance().getReference().child(getString(R.string.ref_products));
-        mCategoryRef = FirebaseDatabase.getInstance().getReference().child(getString(R.string.ref_category));
 
         //init Views
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navView);
-        recyclerView = findViewById(R.id.recyclerView);
+
+        menuTabLayout = findViewById(R.id.menuTabLayout);
+        menuViewPager = findViewById(R.id.menuViewPager);
+
+        FragmentManager fm = getSupportFragmentManager();
+        adapter = new MenuFragmentAdapter(fm, getLifecycle());
+        menuViewPager.setAdapter(adapter);
+
+        menuTabLayout.addTab(menuTabLayout.newTab().setText(getString(R.string.category_menu_label)));
+        menuTabLayout.addTab(menuTabLayout.newTab().setText(getString(R.string.product_admin_label)));
+
+        menuTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                menuViewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        menuViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                menuTabLayout.selectTab(menuTabLayout.getTabAt(position));
+            }
+        });
 
         //init header in NavigationView
         View view = navigationView.inflateHeaderView(R.layout.drawer_header);
@@ -91,38 +113,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //init loadingBar
         mLoadingBar = new ProgressDialog(this);
-
-        //init LineaLayoutManager
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, true);
-        linearLayoutManager.setStackFromEnd(false);
-        linearLayoutManager.setReverseLayout(false);
-        recyclerView.setLayoutManager(linearLayoutManager);
-
-        //Listener for new products to scroll to top recyclerView.smoothScrollToPosition((int) snapshot.getChildrenCount());
-        mProductRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                recyclerView.smoothScrollToPosition((int) snapshot.getChildrenCount());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-        //Listener for new categories to scroll to top recyclerView.smoothScrollToPosition((int) snapshot.getChildrenCount());
-        mCategoryRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                recyclerView.smoothScrollToPosition((int) snapshot.getChildrenCount());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
     }
 
     //Navigation draw
@@ -138,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(new Intent(MainActivity.this, ProfileActivity.class));
                 break;
             case R.id.admin:
-                //starting ProfileActivity to edit users profile
+                //starting adminActivity to edit categories etc
                 startActivity(new Intent(MainActivity.this, AdminActivity.class));
                 break;
             case R.id.logout:
@@ -183,110 +173,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         //header init Name and Picture
                         usernameHeader.setText(usernameV);
                         Picasso.get().load(profileImageUrlV).placeholder(R.drawable.ic_baseline_person_24).resize(250, 250).centerInside().into(profileImageViewHeader);
-
-                        loadCategories();
-                        //loadProducts();
                     }
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Log.d(TAG, "onCancelled: " + error.toString());
+                    Log.d(TAG, "onCancelled: " + error);
                 }
             });
         }
     }
-
-    public void loadCategories() {
-        toolbar.setTitle(getString(R.string.app_name));
-        toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24);
-
-        categoryOptions = new FirebaseRecyclerOptions.Builder<Categories>().setQuery(Objects.requireNonNull(mCategoryRef), Categories.class).build();
-
-        categoryAdapter = new FirebaseRecyclerAdapter<Categories, CategoryViewHolder>(categoryOptions) {
-            @NonNull
-            @Override
-            public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.single_view_category, parent, false);
-                return new CategoryViewHolder(view);
-            }
-
-            @Override
-            protected void onBindViewHolder(@NonNull CategoryViewHolder holder, int position, @NonNull Categories model) {
-                Log.d(TAG, "onBindViewHolderCategories: " + position + " " + model.getCategoryName() + "\t" + model.getCategoryImageUrl());
-                holder.catName.setText(model.getCategoryName());
-                holder.catDescription.setText(model.getCategoryDesc());
-                Picasso.get().load(model.getCategoryImageUrl()).placeholder(R.drawable.ic_baseline_local_cafe_24).resize(250, 250).centerInside().into(holder.catImage);
-
-                holder.singleViewCategoryConstraint.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.d(TAG, "onClick: categoryId: " + model.getCategoryId());
-                        loadProducts(model.getCategoryId(), model.getCategoryName());
-                    }
-                });
-            }
-        };
-        categoryAdapter.startListening();
-        recyclerView.setAdapter(categoryAdapter);
-        Log.d(TAG, "onDataChange: CategoryAdapterStartsListening");
-    }
-
-    private void loadProducts(String categoryID, String categoryName) {
-        productOptions = new FirebaseRecyclerOptions.Builder<Products>().setQuery(mProductRef.orderByChild(getString(R.string.ref_product_category_id)).equalTo(categoryID), Products.class)
-                .build();
-
-        productAdapter = new FirebaseRecyclerAdapter<Products, ProductViewHolder>(productOptions) {
-            @Override
-            protected void onBindViewHolder(@NonNull ProductViewHolder holder, int position, @NonNull Products model) {
-                Log.d(TAG, "onBindViewHolderProduct: " + position + " " + model.getProductName() + "\t" + model.getProductPrice());
-                holder.prodName.setText(model.getProductName());
-                holder.prodPrice.setText(model.getProductPrice());
-
-                holder.singleViewProductConstraint.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        loadProductWithExtrasDialog(model.getProductId());
-                        categoryAdapter.stopListening();
-                    }
-                });
-            }
-
-            @NonNull
-            @Override
-            public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.single_view_product, parent, false);
-                return new ProductViewHolder(view);
-            }
-        };
-        productAdapter.startListening();
-        recyclerView.setAdapter(productAdapter);
-        Log.d(TAG, "onDataChange: ProductAdapterStartsListening");
-
-        toolbar.setTitle(categoryName);
-        toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                productAdapter.stopListening();
-                loadCategories();
-                setSupportActionBar(toolbar);
-            }
-        });
-    }
-
-    private void loadProductWithExtrasDialog(String idOfProduct) {
-        mProductRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.d(TAG, "clicked on item with ID: " + idOfProduct);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
 }

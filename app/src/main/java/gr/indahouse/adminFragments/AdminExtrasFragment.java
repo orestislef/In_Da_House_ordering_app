@@ -31,9 +31,9 @@ import gr.indahouse.R;
 import gr.indahouse.utils.Extras;
 import gr.indahouse.utils.ExtrasViewHolder;
 
-public class ExtrasFragment extends Fragment {
+public class AdminExtrasFragment extends Fragment {
 
-    private static final String TAG = "ExtrasFragment";
+    private static final String TAG = "AdminExtrasFragment";
 
     FirebaseRecyclerAdapter<Extras, ExtrasViewHolder> extrasAdapter;
     FirebaseRecyclerOptions<Extras> extrasOptions;
@@ -49,12 +49,12 @@ public class ExtrasFragment extends Fragment {
 
     View view;
 
-    public ExtrasFragment() {
+    public AdminExtrasFragment() {
         // Required empty public constructor
     }
 
-    public static ExtrasFragment newInstance() {
-        ExtrasFragment fragment = new ExtrasFragment();
+    public static AdminExtrasFragment newInstance() {
+        AdminExtrasFragment fragment = new AdminExtrasFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -87,12 +87,7 @@ public class ExtrasFragment extends Fragment {
 
         loadExtras();
 
-        addExtraBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAddExtraDialog();
-            }
-        });
+        addExtraBtn.setOnClickListener(v -> showAddExtraDialog());
         return view;
     }
 
@@ -102,18 +97,8 @@ public class ExtrasFragment extends Fragment {
         final AlertDialog addExtraDialog = new AlertDialog.Builder(getContext()).create();
         addExtraDialog.setView(addNewExtraDialogView);
 
-        addNewExtraDialogView.findViewById(R.id.add_extra_ok).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addNewExtra(addNewExtraDialogView, addExtraDialog);
-            }
-        });
-        addNewExtraDialogView.findViewById(R.id.add_extra_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addExtraDialog.dismiss();
-            }
-        });
+        addNewExtraDialogView.findViewById(R.id.add_extra_ok).setOnClickListener(v -> addNewExtra(addNewExtraDialogView, addExtraDialog));
+        addNewExtraDialogView.findViewById(R.id.add_extra_cancel).setOnClickListener(v -> addExtraDialog.dismiss());
 
         addExtraDialog.show();
     }
@@ -174,32 +159,26 @@ public class ExtrasFragment extends Fragment {
                 //Do deleteBtn visible
                 holder.deleteExtraBtn.setVisibility(View.VISIBLE);
 
-                holder.deleteExtraBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
-                        dialog.setTitle(getString(R.string.are_you_sure_to_delete_extra_title_label))
-                                .setIcon(R.drawable.ic_baseline_delete_24)
-                                .setMessage(getString(R.string.are_you_sure_to_delete_extra_message_label)+": "+model.getExtraName()+";")
-                                .setNegativeButton(getString(R.string.cancel_admin_btn_label), new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialoginterface, int i) {
-                                        dialoginterface.cancel();
-                                    }
-                                })
-                                .setPositiveButton(getString(R.string.delete_label), new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialoginterface, int i) {
-                                        mExtraRef.child(model.getExtraId()).removeValue();
-                                    }
-                                }).show();
-                    }
+                holder.deleteExtraBtn.setOnClickListener(v -> {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                    dialog.setTitle(getString(R.string.are_you_sure_to_delete_extra_title_label))
+                            .setIcon(R.drawable.ic_baseline_delete_24)
+                            .setMessage(getString(R.string.are_you_sure_to_delete_extra_message_label)+": "+model.getExtraName()+";")
+                            .setNegativeButton(getString(R.string.cancel_admin_btn_label), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialoginterface, int i) {
+                                    dialoginterface.cancel();
+                                }
+                            })
+                            .setPositiveButton(getString(R.string.delete_label), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialoginterface, int i) {
+                                    mExtraRef.child(model.getExtraId()).removeValue();
+                                }
+                            }).show();
                 });
 
-                holder.singleViewExtraConstraint.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.d(TAG, "onBindViewHolder: extraId: " + model.getExtraId());
-                        showEditExtraDialog(model.getExtraId(), model.getExtraName(), model.getExtraPrice());
-                    }
+                holder.singleViewExtraConstraint.setOnClickListener(v -> {
+                    Log.d(TAG, "onBindViewHolder: extraId: " + model.getExtraId());
+                    showEditExtraDialog(model.getExtraId(), model.getExtraName(), model.getExtraPrice());
                 });
             }
         };
@@ -225,18 +204,8 @@ public class ExtrasFragment extends Fragment {
         Objects.requireNonNull(editExtraNameTL.getEditText()).setText(extraName);
         Objects.requireNonNull(editExtraPriceTL.getEditText()).setText(extraPrice);
 
-        editExtraDialogView.findViewById(R.id.edit_extra_ok).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditExtra(extraId, editExtraDialog);
-            }
-        });
-        editExtraDialogView.findViewById(R.id.edit_extra_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editExtraDialog.dismiss();
-            }
-        });
+        editExtraDialogView.findViewById(R.id.edit_extra_ok).setOnClickListener(v -> EditExtra(extraId, editExtraDialog));
+        editExtraDialogView.findViewById(R.id.edit_extra_cancel).setOnClickListener(v -> editExtraDialog.dismiss());
 
         editExtraDialog.show();
     }
@@ -256,12 +225,9 @@ public class ExtrasFragment extends Fragment {
             hashMap.put(getString(R.string.ref_extra_name), extraNameTL);
             hashMap.put(getString(R.string.ref_extra_price), extraPriceTL);
 
-            mExtraRef.child(extraId).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void unused) {
-                    Toast.makeText(getContext(), getString(R.string.successful_edit_of_extra), Toast.LENGTH_SHORT).show();
-                    editExtraDialog.dismiss();
-                }
+            mExtraRef.child(extraId).updateChildren(hashMap).addOnSuccessListener(unused -> {
+                Toast.makeText(getContext(), getString(R.string.successful_edit_of_extra), Toast.LENGTH_SHORT).show();
+                editExtraDialog.dismiss();
             });
         }
     }

@@ -34,9 +34,9 @@ import gr.indahouse.R;
 import gr.indahouse.utils.Categories;
 import gr.indahouse.utils.CategoryViewHolder;
 
-public class CategoryFragment extends Fragment {
+public class AdminCategoryFragment extends Fragment {
 
-    private static final String TAG = "CategoryFragment";
+    private static final String TAG = "AdminCategoryFragment";
     FirebaseRecyclerAdapter<Categories, CategoryViewHolder> categoryAdapter;
     FirebaseRecyclerOptions<Categories> categoryOptions;
 
@@ -51,12 +51,12 @@ public class CategoryFragment extends Fragment {
 
     View view;
 
-    public CategoryFragment() {
+    public AdminCategoryFragment() {
         // Required empty public constructor
     }
 
-    public static CategoryFragment newInstance() {
-        CategoryFragment fragment = new CategoryFragment();
+    public static AdminCategoryFragment newInstance() {
+        AdminCategoryFragment fragment = new AdminCategoryFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -90,12 +90,7 @@ public class CategoryFragment extends Fragment {
 
         loadCategories();
 
-        addCategoryBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAddCategoryDialog();
-            }
-        });
+        addCategoryBtn.setOnClickListener(v -> showAddCategoryDialog());
 
         return view;
     }
@@ -122,20 +117,14 @@ public class CategoryFragment extends Fragment {
                 //Do delete button visible
                 holder.deleteCatBtn.setVisibility(View.VISIBLE);
 
-                holder.deleteCatBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showAlertDialogDeleteProductFromCategory(model.getCategoryId(), model.getCategoryName());
-                        ShowAlertDialogDeleteCategory(model.getCategoryId(), model.getCategoryName());
-                    }
+                holder.deleteCatBtn.setOnClickListener(v -> {
+                    showAlertDialogDeleteProductFromCategory(model.getCategoryId(), model.getCategoryName());
+                    ShowAlertDialogDeleteCategory(model.getCategoryId(), model.getCategoryName());
                 });
 
-                holder.singleViewCategoryConstraint.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.d(TAG, "onClick: categoryId: " + model.getCategoryId());
-                        showEditCategoryDialog(model.getCategoryId(), model.getCategoryName(), model.getCategoryDesc(), model.getCategoryImageUrl(), model.getCategoryPosition());
-                    }
+                holder.singleViewCategoryConstraint.setOnClickListener(v -> {
+                    Log.d(TAG, "onClick: categoryId: " + model.getCategoryId());
+                    showEditCategoryDialog(model.getCategoryId(), model.getCategoryName(), model.getCategoryDesc(), model.getCategoryImageUrl(), model.getCategoryPosition());
                 });
             }
         };
@@ -149,18 +138,8 @@ public class CategoryFragment extends Fragment {
         final View addNewCategoryDialogView = factory.inflate(R.layout.add_category, null);
         final AlertDialog addCategoryDialog = new AlertDialog.Builder(getContext()).create();
         addCategoryDialog.setView(addNewCategoryDialogView);
-        addNewCategoryDialogView.findViewById(R.id.add_category_ok).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addNewCategory(addNewCategoryDialogView, addCategoryDialog);
-            }
-        });
-        addNewCategoryDialogView.findViewById(R.id.add_category_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addCategoryDialog.dismiss();
-            }
-        });
+        addNewCategoryDialogView.findViewById(R.id.add_category_ok).setOnClickListener(v -> addNewCategory(addNewCategoryDialogView, addCategoryDialog));
+        addNewCategoryDialogView.findViewById(R.id.add_category_cancel).setOnClickListener(v -> addCategoryDialog.dismiss());
 
         addCategoryDialog.show();
     }
@@ -181,18 +160,8 @@ public class CategoryFragment extends Fragment {
         Objects.requireNonNull(editCatDesc.getEditText()).setText(categoryDesc);
         Objects.requireNonNull(editCatImgUrl.getEditText()).setText(categoryImageUrl);
 
-        editCategoryDialogView.findViewById(R.id.edit_category_ok).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditCategory(id, categoryPosition, editCategoryDialog);
-            }
-        });
-        editCategoryDialogView.findViewById(R.id.edit_category_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editCategoryDialog.dismiss();
-            }
-        });
+        editCategoryDialogView.findViewById(R.id.edit_category_ok).setOnClickListener(v -> EditCategory(id, categoryPosition, editCategoryDialog));
+        editCategoryDialogView.findViewById(R.id.edit_category_cancel).setOnClickListener(v -> editCategoryDialog.dismiss());
 
         editCategoryDialog.show();
     }
@@ -213,11 +182,7 @@ public class CategoryFragment extends Fragment {
             alertDialog.setTitle(getString(R.string.alertdialog_title_image_not_valid_label));
             alertDialog.setMessage(getString(R.string.alertdialog_message_image_not_valid_label));
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
+                    (dialog, which) -> dialog.dismiss());
             alertDialog.show();
         } else {
             //Get the Values
@@ -237,6 +202,7 @@ public class CategoryFragment extends Fragment {
             hashMap.put(getString(R.string.ref_category_image_url), catImgUrl);
 
 
+            assert key != null;
             mCategoryRef.child(key).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
                 @Override
                 public void onSuccess(Object o) {
@@ -264,11 +230,7 @@ public class CategoryFragment extends Fragment {
             alertDialog.setTitle(getString(R.string.alertdialog_title_image_not_valid_label));
             alertDialog.setMessage(getString(R.string.alertdialog_message_image_not_valid_label));
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
+                    (dialog, which) -> dialog.dismiss());
             alertDialog.show();
         } else {
             //Get the Values

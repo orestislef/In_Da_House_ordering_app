@@ -9,7 +9,6 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -25,8 +24,6 @@ import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -88,18 +85,15 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         storageRef = FirebaseStorage.getInstance().getReference().child(getString(R.string.ref_profileImage));
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        getLocationBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //check permission for location
-                if (ActivityCompat.checkSelfPermission(SetupActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) ==
-                        PackageManager.PERMISSION_GRANTED) {
-                    //When permission granted
-                    getCurrentLocation();
+        getLocationBtn.setOnClickListener(v -> {
+            //check permission for location
+            if (ActivityCompat.checkSelfPermission(SetupActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                //When permission granted
+                getCurrentLocation();
 
-                } else {
-                    ActivityCompat.requestPermissions(SetupActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
-                }
+            } else {
+                ActivityCompat.requestPermissions(SetupActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
             }
         });
 
@@ -149,25 +143,24 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             showError(inputUsername, getString(R.string.username_is_not_valid));
         } else if (street.isEmpty() || street.length() < 3) {
             showError(inputStreet, getString(R.string.street_is_not_valid));
-        } else if (floor.isEmpty() || floor.length() < 1) {
+        } else if (floor.isEmpty()) {
             showError(inputFloor, getString(R.string.floor_is_not_valid));
-        } else if (imageUri == null) {
-            Toast.makeText(this, getString(R.string.please_select_image_setup), Toast.LENGTH_SHORT).show();
         } else {
-            mLoadingBar.setTitle(getString(R.string.adding_setup_profile));
-            mLoadingBar.setCanceledOnTouchOutside(false);
-            mLoadingBar.show();
+            if (imageUri == null) {
+                Toast.makeText(this, getString(R.string.please_select_image_setup), Toast.LENGTH_SHORT).show();
+            } else {
+                mLoadingBar.setTitle(getString(R.string.adding_setup_profile));
+                mLoadingBar.setCanceledOnTouchOutside(false);
+                mLoadingBar.show();
 
-            //TODO: add a function to lime image size to 2mb at max
-            //Upload the chosen Image
-            storageRef.child(mUser.getUid()).putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        //Image successfully uploaded
-                        storageRef.child(mUser.getUid()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
+                //TODO: add a function to lime image size to 2mb at max
+                //Upload the chosen Image
+                storageRef.child(mUser.getUid()).putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            //Image successfully uploaded
+                            storageRef.child(mUser.getUid()).getDownloadUrl().addOnSuccessListener(uri -> {
                                 HashMap hashMap = new HashMap();
                                 hashMap.put(getString(R.string.ref_users_username), username);
                                 hashMap.put(getString(R.string.ref_users_street), street);
@@ -175,33 +168,27 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                                 hashMap.put(getString(R.string.ref_users_profileImage), uri.toString());
 
                                 //Saving data from EditTextBoxes to FirebaseDatabase
-                                mUserRef.child(mUser.getUid()).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
-                                    @Override
-                                    public void onSuccess(Object o) {
-                                        //If  Data is saved then go to MainActivity
-                                        Intent intent = new Intent(SetupActivity.this, MainActivity.class);
-                                        startActivity(intent);
-                                        mLoadingBar.dismiss();
-                                        Toast.makeText(SetupActivity.this, getString(R.string.setup_complete_msg), Toast.LENGTH_SHORT).show();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        // Data NOT saved on FirebaseDatabase and Show error
-                                        mLoadingBar.dismiss();
-                                        Log.d(TAG, "onFailure: failed to save data on FirebaseDatabase");
-                                        Toast.makeText(SetupActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                                    }
+                                mUserRef.child(mUser.getUid()).updateChildren(hashMap).addOnSuccessListener(o -> {
+                                    //If  Data is saved then go to MainActivity
+                                    Intent intent = new Intent(SetupActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                    mLoadingBar.dismiss();
+                                    Toast.makeText(SetupActivity.this, getString(R.string.setup_complete_msg), Toast.LENGTH_SHORT).show();
+                                }).addOnFailureListener(e -> {
+                                    // Data NOT saved on FirebaseDatabase and Show error
+                                    mLoadingBar.dismiss();
+                                    Log.d(TAG, "onFailure: failed to save data on FirebaseDatabase");
+                                    Toast.makeText(SetupActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                                 });
-                            }
-                        });
-                    } else {
-                        //Image Didn't uploaded
-                        Log.d(TAG, "onComplete: Upload Image Task was NOT complete");
-                        Toast.makeText(SetupActivity.this, getString(R.string.error_uploading_image), Toast.LENGTH_SHORT).show();
+                            });
+                        } else {
+                            //Image Didn't uploaded
+                            Log.d(TAG, "onComplete: Upload Image Task was NOT complete");
+                            Toast.makeText(SetupActivity.this, getString(R.string.error_uploading_image), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     }
 
@@ -219,22 +206,19 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-            @Override
-            public void onComplete(@NonNull Task<Location> task) {
-                //init location
-                Location location = task.getResult();
-                if (location != null) {
-                    Geocoder geocoder = new Geocoder(SetupActivity.this, Locale.getDefault());
-                    //init address list
-                    try {
-                        List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                        //set locality to inputStreet
-                        Objects.requireNonNull(inputStreet.getEditText()).setText(addresses.get(0).getAddressLine(0));
+        fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task -> {
+            //init location
+            Location location = task.getResult();
+            if (location != null) {
+                Geocoder geocoder = new Geocoder(SetupActivity.this, Locale.getDefault());
+                //init address list
+                try {
+                    List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                    //set locality to inputStreet
+                    Objects.requireNonNull(inputStreet.getEditText()).setText(addresses.get(0).getAddressLine(0));
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -248,20 +232,12 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 //alert dialog to say for the image size
                 AlertDialog.Builder builder = new AlertDialog.Builder(SetupActivity.this);
                 builder.setTitle(getString(R.string.alert_dialog_title));
-                builder.setPositiveButton(getString(R.string.alert_dialog_yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //Opens default image picker from phone/tablet to chose image
-                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                        intent.setType("image/*");
-                        startActivityForResult(intent, REQUEST_CODE);
-                    }
-                }).setNegativeButton(getString(R.string.alert_dialog_no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                builder.setPositiveButton(getString(R.string.alert_dialog_yes), (dialog, which) -> {
+                    //Opens default image picker from phone/tablet to chose image
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    intent.setType("image/*");
+                    startActivityForResult(intent, REQUEST_CODE);
+                }).setNegativeButton(getString(R.string.alert_dialog_no), (dialog, which) -> dialog.dismiss());
                 builder.show();
                 break;
             case R.id.btnSave:

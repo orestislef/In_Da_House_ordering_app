@@ -37,42 +37,39 @@ public class SplashActivity extends AppCompatActivity {
         mUser = mAuth.getCurrentUser();
         mUserRef = FirebaseDatabase.getInstance().getReference().child(getString(R.string.ref_users));
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                if (mUser != null) {
-                    mUserRef.child(mUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        Runnable runnable = () -> {
+            if (mUser != null) {
+                mUserRef.child(mUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists()) {
-                                //if already authenticated and setup is complete then go to MainActivity
-                                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                                startActivity(intent);
-                                //transition fade in -> fade out
-                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                                finish();
-                            } else {
-                                //if already authenticated and setup is NOT complete then go to SetupActivity
-                                Intent intent = new Intent(SplashActivity.this, SetupActivity.class);
-                                overridePendingTransition(android.R.anim.anticipate_overshoot_interpolator, android.R.anim.anticipate_interpolator);
-                                startActivity(intent);
-                                finish();
-                            }
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            //if already authenticated and setup is complete then go to MainActivity
+                            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            //transition fade in -> fade out
+                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                            finish();
+                        } else {
+                            //if already authenticated and setup is NOT complete then go to SetupActivity
+                            Intent intent = new Intent(SplashActivity.this, SetupActivity.class);
+                            overridePendingTransition(android.R.anim.anticipate_overshoot_interpolator, android.R.anim.anticipate_interpolator);
+                            startActivity(intent);
+                            finish();
                         }
+                    }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            Log.d(TAG, "onCancelled: " + error.toString());
-                        }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.d(TAG, "onCancelled: " + error);
+                    }
 
-                    });
-                } else {
-                    //if NOT already authenticated then go to LoginActivity
-                    Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
+                });
+            } else {
+                //if NOT already authenticated then go to LoginActivity
+                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
             }
         };
         //delay for 0.5 sec

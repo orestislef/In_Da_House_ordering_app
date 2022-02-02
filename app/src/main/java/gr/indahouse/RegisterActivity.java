@@ -11,10 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
@@ -47,9 +44,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         //retrieving text if screen rotates and putting it back to where it belongs
         if (savedInstanceState != null) {
-            inputEmail.getEditText().setText(String.valueOf(savedInstanceState.getString("input_register_email_key")));
-            inputPassword.getEditText().setText(String.valueOf(savedInstanceState.getString("input_register_password_key")));
-            inputConfirmPassword.getEditText().setText(String.valueOf(savedInstanceState.getString("input_register_confirm_password_key")));
+            Objects.requireNonNull(inputEmail.getEditText()).setText(String.valueOf(savedInstanceState.getString("input_register_email_key")));
+            Objects.requireNonNull(inputPassword.getEditText()).setText(String.valueOf(savedInstanceState.getString("input_register_password_key")));
+            Objects.requireNonNull(inputConfirmPassword.getEditText()).setText(String.valueOf(savedInstanceState.getString("input_register_confirm_password_key")));
         }
 
         //create onClick listeners
@@ -61,9 +58,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         //When rotate save instance to reText fields onCreate
-        outState.putString("input_register_email_key", inputEmail.getEditText().getText().toString());
-        outState.putString("input_register_password_key", inputPassword.getEditText().getText().toString());
-        outState.putString("input_register_confirm_password_key", inputConfirmPassword.getEditText().getText().toString());
+        outState.putString("input_register_email_key", Objects.requireNonNull(inputEmail.getEditText()).getText().toString());
+        outState.putString("input_register_password_key", Objects.requireNonNull(inputPassword.getEditText()).getText().toString());
+        outState.putString("input_register_confirm_password_key", Objects.requireNonNull(inputConfirmPassword.getEditText()).getText().toString());
     }
 
     @Override
@@ -98,22 +95,19 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             mLoadingBar.setMessage(getString(R.string.please_wait_while_registration));
             mLoadingBar.setCanceledOnTouchOutside(false);
             mLoadingBar.show();
-            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        //Register Successful and go to SetupActivity
-                        mLoadingBar.dismiss();
-                        Toast.makeText(RegisterActivity.this, getString(R.string.registration_is_successful), Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(RegisterActivity.this, SetupActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        mLoadingBar.dismiss();
-                        //Failed to Register
-                        Toast.makeText(RegisterActivity.this, getString(R.string.registration_is_failed), Toast.LENGTH_SHORT).show();
-                    }
+            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    //Register Successful and go to SetupActivity
+                    mLoadingBar.dismiss();
+                    Toast.makeText(RegisterActivity.this, getString(R.string.registration_is_successful), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(RegisterActivity.this, SetupActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    mLoadingBar.dismiss();
+                    //Failed to Register
+                    Toast.makeText(RegisterActivity.this, getString(R.string.registration_is_failed), Toast.LENGTH_SHORT).show();
                 }
             });
         }

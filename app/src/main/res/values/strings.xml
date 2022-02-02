@@ -126,6 +126,11 @@
     <string name="product_admin_label">Προϊόντα</string>
     <string name="extras_admin_label">Extras</string>
 
+    <!-- for MenuFragment labels -->
+    <string name="category_menu_label">Κατηγορίες</string>
+    <string name="product_menu_label">Προϊόντα</string>
+    <string name="extras_menu_label">Extras</string>
+
     <string name="cancel_admin_btn_label">Ακύρωση</string>
     <string name="back_admin_btn_label">Πίσω</string>
 
@@ -209,5 +214,7 @@
     <!--for alertDialog extras -->
     <string name="are_you_sure_to_delete_extra_title_label">Προσοχή</string>
     <string name="are_you_sure_to_delete_extra_message_label">Είστε σίγουροι οτι θέλετε να διαγράψετε το extra</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

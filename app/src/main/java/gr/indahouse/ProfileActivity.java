@@ -16,16 +16,12 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -73,7 +69,7 @@ public class ProfileActivity extends AppCompatActivity {
         //init AppBarToolBar
         toolbar = findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(getString(R.string.setup_profile_title));
+        Objects.requireNonNull(getSupportActionBar()).setTitle(getString(R.string.setup_profile_title));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         profileImageView = findViewById(R.id.circleImageView);
@@ -94,12 +90,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         //init fusedLocationProviderClient
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        getLocationBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getCurrentLocation();
-            }
-        });
+        getLocationBtn.setOnClickListener(v -> getCurrentLocation());
 
         //Fetch data for current user and putting it in the right fields
         mRef.child(mUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -108,34 +99,29 @@ public class ProfileActivity extends AppCompatActivity {
                 if (snapshot.exists()) {
                     Log.d(TAG, "onDataChange: " + snapshot.getValue());
                     //fetching data for user
-                    String profileImageUrl = snapshot.child(getString(R.string.ref_users_profileImage)).getValue().toString();
-                    String username = snapshot.child(getString(R.string.ref_users_username)).getValue().toString();
-                    String street = snapshot.child(getString(R.string.ref_users_street)).getValue().toString();
-                    String floor = snapshot.child(getString(R.string.ref_users_floor)).getValue().toString();
+                    String profileImageUrl = Objects.requireNonNull(snapshot.child(getString(R.string.ref_users_profileImage)).getValue()).toString();
+                    String username = Objects.requireNonNull(snapshot.child(getString(R.string.ref_users_username)).getValue()).toString();
+                    String street = Objects.requireNonNull(snapshot.child(getString(R.string.ref_users_street)).getValue()).toString();
+                    String floor = Objects.requireNonNull(snapshot.child(getString(R.string.ref_users_floor)).getValue()).toString();
 
                     //Putting it into fields
                     Picasso.get().load(profileImageUrl).placeholder(R.drawable.ic_baseline_person_24).resize(250, 250).centerInside().into(profileImageView);
-                    inputStreet.getEditText().setText(street);
-                    inputFloor.getEditText().setText(floor);
-                    inputUsername.getEditText().setText(username);
+                    Objects.requireNonNull(inputStreet.getEditText()).setText(street);
+                    Objects.requireNonNull(inputFloor.getEditText()).setText(floor);
+                    Objects.requireNonNull(inputUsername.getEditText()).setText(username);
 
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d(TAG, "onCancelled: fetch data of current user " + error.toString());
-                Toast.makeText(ProfileActivity.this, "error: " + error.toString(), Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onCancelled: fetch data of current user " + error);
+                Toast.makeText(ProfileActivity.this, "error: " + error, Toast.LENGTH_SHORT).show();
             }
         });
 
         //click on Button save
-        btnUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateData();
-            }
-        });
+        btnUpdate.setOnClickListener(v -> updateData());
     }
 
     private void getCurrentLocation() {
@@ -143,22 +129,19 @@ public class ProfileActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(ProfileActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED) {
             //When permission granted
-            fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-                @Override
-                public void onComplete(@NonNull Task<Location> task) {
-                    //init location
-                    Location location = task.getResult();
-                    if (location != null) {
-                        Geocoder geocoder = new Geocoder(ProfileActivity.this, Locale.getDefault());
-                        //init address list
-                        try {
-                            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                            //set locality to inputStreet
-                            Objects.requireNonNull(inputStreet.getEditText()).setText(addresses.get(0).getAddressLine(0));
+            fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task -> {
+                //init location
+                Location location = task.getResult();
+                if (location != null) {
+                    Geocoder geocoder = new Geocoder(ProfileActivity.this, Locale.getDefault());
+                    //init address list
+                    try {
+                        List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                        //set locality to inputStreet
+                        Objects.requireNonNull(inputStreet.getEditText()).setText(addresses.get(0).getAddressLine(0));
 
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
             });
@@ -180,7 +163,7 @@ public class ProfileActivity extends AppCompatActivity {
             showError(inputUsername, getString(R.string.username_is_not_valid));
         } else if (street.isEmpty() || street.length() < 3) {
             showError(inputStreet, getString(R.string.street_is_not_valid));
-        } else if (floor.isEmpty() || floor.length() < 1) {
+        } else if (floor.isEmpty()) {
             showError(inputFloor, getString(R.string.floor_is_not_valid));
         } else {
             mLoadingBar.setTitle(getString(R.string.adding_setup_profile));
@@ -203,14 +186,11 @@ public class ProfileActivity extends AppCompatActivity {
                     mLoadingBar.dismiss();
                     Toast.makeText(ProfileActivity.this, getString(R.string.setup_complete_msg), Toast.LENGTH_SHORT).show();
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    //data did NOT updated
-                    Log.d(TAG, "onFailure: Data did NOT updated for User: " + mAuth.getUid());
-                    mLoadingBar.dismiss();
-                    Toast.makeText(ProfileActivity.this, "error: " + e.toString(), Toast.LENGTH_LONG).show();
-                }
+            }).addOnFailureListener(e -> {
+                //data did NOT updated
+                Log.d(TAG, "onFailure: Data did NOT updated for User: " + mAuth.getUid());
+                mLoadingBar.dismiss();
+                Toast.makeText(ProfileActivity.this, "error: " + e, Toast.LENGTH_LONG).show();
             });
         }
     }

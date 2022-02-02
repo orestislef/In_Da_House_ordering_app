@@ -30,7 +30,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -39,9 +38,9 @@ import gr.indahouse.R;
 import gr.indahouse.utils.ProductViewHolder;
 import gr.indahouse.utils.Products;
 
-public class ProductFragment extends Fragment {
+public class AdminProductFragment extends Fragment {
 
-    private static final String TAG = "ProductFragment";
+    private static final String TAG = "AdminProductFragment";
     FirebaseRecyclerAdapter<Products, ProductViewHolder> productsAdapter;
     FirebaseRecyclerOptions<Products> productsOptions;
 
@@ -56,7 +55,6 @@ public class ProductFragment extends Fragment {
 
     AutoCompleteTextView autoCompleteAddCategoryIdTextView, autoCompleteEditCategoryIdTextView;
     ArrayAdapter<String> adapterItemsId;
-    ArrayAdapter<String> adapterItemsName;
     String[] itemsId;
     String[] itemsName;
     String editProdCategoryId;
@@ -65,12 +63,12 @@ public class ProductFragment extends Fragment {
 
     View view;
 
-    public ProductFragment() {
+    public AdminProductFragment() {
         // Required empty public constructor
     }
 
-    public static ProductFragment newInstance() {
-        ProductFragment fragment = new ProductFragment();
+    public static AdminProductFragment newInstance() {
+        AdminProductFragment fragment = new AdminProductFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -104,12 +102,7 @@ public class ProductFragment extends Fragment {
 
         loadProducts();
 
-        addProductBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAddProductDialog();
-            }
-        });
+        addProductBtn.setOnClickListener(v -> showAddProductDialog());
 
         return view;
     }
@@ -134,32 +127,26 @@ public class ProductFragment extends Fragment {
                 //Do deleteBtn visible
                 holder.deleteProdBtn.setVisibility(View.VISIBLE);
 
-                holder.deleteProdBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
-                        dialog.setTitle(getString(R.string.are_you_sure_to_delete_product_title_label))
-                                .setIcon(R.drawable.ic_baseline_delete_24)
-                                .setMessage(getString(R.string.are_you_sure_to_delete_product_message_label)+": "+model.getProductName()+";")
-                                .setNegativeButton(getString(R.string.cancel_admin_btn_label), new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialoginterface, int i) {
-                                        dialoginterface.cancel();
-                                    }
-                                })
-                                .setPositiveButton(getString(R.string.delete_label), new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialoginterface, int i) {
-                                        mProductsRef.child(model.getProductId()).removeValue();
-                                    }
-                                }).show();
-                    }
+                holder.deleteProdBtn.setOnClickListener(v -> {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                    dialog.setTitle(getString(R.string.are_you_sure_to_delete_product_title_label))
+                            .setIcon(R.drawable.ic_baseline_delete_24)
+                            .setMessage(getString(R.string.are_you_sure_to_delete_product_message_label)+": "+model.getProductName()+";")
+                            .setNegativeButton(getString(R.string.cancel_admin_btn_label), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialoginterface, int i) {
+                                    dialoginterface.cancel();
+                                }
+                            })
+                            .setPositiveButton(getString(R.string.delete_label), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialoginterface, int i) {
+                                    mProductsRef.child(model.getProductId()).removeValue();
+                                }
+                            }).show();
                 });
 
-                holder.singleViewProductConstraint.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.d(TAG, "onBindViewHolder: productId: " + model.getProductId());
-                        showEditProductDialog(model.getProductId(), model.getProductName(), model.getProductPrice(), model.getProductCategoryId());
-                    }
+                holder.singleViewProductConstraint.setOnClickListener(v -> {
+                    Log.d(TAG, "onBindViewHolder: productId: " + model.getProductId());
+                    showEditProductDialog(model.getProductId(), model.getProductName(), model.getProductPrice(), model.getProductCategoryId());
                 });
             }
         };
@@ -221,26 +208,11 @@ public class ProductFragment extends Fragment {
         adapterItemsId = new ArrayAdapter<>(getContext(), R.layout.category_list_item, itemsName);
         autoCompleteAddCategoryIdTextView.setAdapter(adapterItemsId);
 
-        addNewProductDialogView.findViewById(R.id.add_product_ok).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addNewProduct(addNewProductDialogView, addProductDialog, addNewProdCategoryId[0]);
-            }
-        });
-        addNewProductDialogView.findViewById(R.id.add_product_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addProductDialog.dismiss();
-            }
-        });
+        addNewProductDialogView.findViewById(R.id.add_product_ok).setOnClickListener(v -> addNewProduct(addNewProductDialogView, addProductDialog, addNewProdCategoryId[0]));
+        addNewProductDialogView.findViewById(R.id.add_product_cancel).setOnClickListener(v -> addProductDialog.dismiss());
 
         //Change Name of category id To id of category
-        autoCompleteAddCategoryIdTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                addNewProdCategoryId[0] = itemsId[position];
-            }
-        });
+        autoCompleteAddCategoryIdTextView.setOnItemClickListener((parent, view, position, id) -> addNewProdCategoryId[0] = itemsId[position]);
 
         addProductDialog.show();
     }
@@ -270,25 +242,10 @@ public class ProductFragment extends Fragment {
         Objects.requireNonNull(editProdPriceTL.getEditText()).setText(productPrice);
 
         //Change Name of category id To id of category
-        autoCompleteEditCategoryIdTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                editProdCategoryId = itemsId[position];
-            }
-        });
+        autoCompleteEditCategoryIdTextView.setOnItemClickListener((parent, view, position, id) -> editProdCategoryId = itemsId[position]);
 
-        editProductDialogView.findViewById(R.id.edit_product_ok).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditProduct(productId, editProductDialog, editProdCategoryId);
-            }
-        });
-        editProductDialogView.findViewById(R.id.edit_product_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editProductDialog.dismiss();
-            }
-        });
+        editProductDialogView.findViewById(R.id.edit_product_ok).setOnClickListener(v -> EditProduct(productId, editProductDialog, editProdCategoryId));
+        editProductDialogView.findViewById(R.id.edit_product_cancel).setOnClickListener(v -> editProductDialog.dismiss());
         editProductDialog.show();
 
     }
@@ -313,12 +270,9 @@ public class ProductFragment extends Fragment {
             hashMap.put(getString(R.string.ref_product_price), prodPriceTL);
             hashMap.put(getString(R.string.ref_product_category_id), prodCategoryId);
 
-            mProductsRef.child(productId).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void unused) {
-                    Toast.makeText(getContext(), getString(R.string.successful_edit_of_product), Toast.LENGTH_SHORT).show();
-                    editProductDialog.dismiss();
-                }
+            mProductsRef.child(productId).updateChildren(hashMap).addOnSuccessListener(unused -> {
+                Toast.makeText(getContext(), getString(R.string.successful_edit_of_product), Toast.LENGTH_SHORT).show();
+                editProductDialog.dismiss();
             });
         }
 

@@ -9,8 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -42,7 +40,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
 
         //retrieving text if screen rotates and putting it back to where it belongs
         if (savedInstanceState != null) {
-            inputEmail.getEditText().setText(String.valueOf(savedInstanceState.getString("input_email_reset_key")));
+            Objects.requireNonNull(inputEmail.getEditText()).setText(String.valueOf(savedInstanceState.getString("input_email_reset_key")));
         }
 
         //create onClick listeners
@@ -60,31 +58,26 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         //When rotate save instance to reText fields onCreate
-        outState.putString("input_email_reset_key", inputEmail.getEditText().getText().toString());
+        outState.putString("input_email_reset_key", Objects.requireNonNull(inputEmail.getEditText()).getText().toString());
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnReset:
-                String email = inputEmail.getEditText().getText().toString();
-                if (email.isEmpty()) {
-                    Toast.makeText(ForgotPasswordActivity.this, R.string.wrong_email_input, Toast.LENGTH_SHORT).show();
-                } else {
-                    mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                //Reset E-mail successfully sended
-                                Toast.makeText(ForgotPasswordActivity.this, R.string.please_check_your_email, Toast.LENGTH_SHORT).show();
-                            } else {
-                                //Reset E-mail NOT sended
-                                Toast.makeText(ForgotPasswordActivity.this, R.string.reset_email_not_sended, Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                }
-                break;
+        if (v.getId() == R.id.btnReset) {
+            String email = Objects.requireNonNull(inputEmail.getEditText()).getText().toString();
+            if (email.isEmpty()) {
+                Toast.makeText(ForgotPasswordActivity.this, R.string.wrong_email_input, Toast.LENGTH_SHORT).show();
+            } else {
+                mAuth.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        //Reset E-mail successfully sended
+                        Toast.makeText(ForgotPasswordActivity.this, R.string.please_check_your_email, Toast.LENGTH_SHORT).show();
+                    } else {
+                        //Reset E-mail NOT sended
+                        Toast.makeText(ForgotPasswordActivity.this, R.string.reset_email_not_sended, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         }
     }
 }

@@ -12,11 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -51,8 +47,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         //Retrieving text if screen rotates and putting it back to where it belongs
         if (savedInstanceState != null) {
-            inputEmail.getEditText().setText(String.valueOf(savedInstanceState.getString("input_login_email_key")));
-            inputPassword.getEditText().setText(String.valueOf(savedInstanceState.getString("input_login_password_key")));
+            Objects.requireNonNull(inputEmail.getEditText()).setText(String.valueOf(savedInstanceState.getString("input_login_email_key")));
+            Objects.requireNonNull(inputPassword.getEditText()).setText(String.valueOf(savedInstanceState.getString("input_login_password_key")));
         }
 
         //init FirebaseDatabase
@@ -73,8 +69,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         //When rotate save instance to reText fields onCreate
-        outState.putString("input_login_email_key", inputEmail.getEditText().getText().toString());
-        outState.putString("input_login_password_key", inputPassword.getEditText().getText().toString());
+        outState.putString("input_login_email_key", Objects.requireNonNull(inputEmail.getEditText()).getText().toString());
+        outState.putString("input_login_password_key", Objects.requireNonNull(inputPassword.getEditText()).getText().toString());
     }
 
     @Override
@@ -111,46 +107,40 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             mLoadingBar.setCanceledOnTouchOutside(false);
             mLoadingBar.show();
 
-            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        mLoadingBar.dismiss();
-                        Toast.makeText(LoginActivity.this, R.string.connection_is_successful, Toast.LENGTH_SHORT).show();
-
-                        //check if in database User is already setup
-                        mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if (snapshot.getValue() == null) {
-                                    //if user is NOT already setup go to SetupActivity
-                                    Intent intent = new Intent(LoginActivity.this, SetupActivity.class);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(intent);
-                                    finish();
-                                } else {
-                                    //if user is already setup go to MainActivity
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                                Log.d(TAG, "onCancelled: " + error.toString());
-                            }
-                        });
-                    }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                    Log.d(TAG, "onFailure: " + e.getMessage());
+            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
                     mLoadingBar.dismiss();
+                    Toast.makeText(LoginActivity.this, R.string.connection_is_successful, Toast.LENGTH_SHORT).show();
+
+                    //check if in database User is already setup
+                    mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.getValue() == null) {
+                                //if user is NOT already setup go to SetupActivity
+                                Intent intent = new Intent(LoginActivity.this, SetupActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                //if user is already setup go to MainActivity
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.d(TAG, "onCancelled: " + error);
+                        }
+                    });
                 }
+            }).addOnFailureListener(e -> {
+                Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                Log.d(TAG, "onFailure: " + e.getMessage());
+                mLoadingBar.dismiss();
             });
         }
 
