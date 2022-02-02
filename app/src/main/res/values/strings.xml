@@ -119,7 +119,7 @@
     <!-- for firebase database Extras reference -->
     <string name="ref_extra_id">extraId</string>
     <string name="ref_extra_name">extraName</string>
-    <string name="ref_extra_price">productPrice</string>
+    <string name="ref_extra_price">extraPrice</string>
 
     <!-- for AdminFragment labels -->
     <string name="category_admin_label">Κατηγορίες</string>

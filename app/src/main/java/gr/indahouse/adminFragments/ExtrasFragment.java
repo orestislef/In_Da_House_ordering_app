@@ -166,6 +166,8 @@ public class ExtrasFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull ExtrasViewHolder holder, int position, @NonNull Extras model) {
                 Log.d(TAG, "onBindViewHolderExtras: " + position + " " + model.getExtraName());
+                Log.d(TAG, "onBindViewHolderExtras: " + position + " " + model.getExtraPrice());
+
                 holder.extraName.setText(model.getExtraName());
                 holder.extraPrice.setText(model.getExtraPrice());
 
@@ -207,7 +209,65 @@ public class ExtrasFragment extends Fragment {
     }
 
     private void showEditExtraDialog(String extraId, String extraName, String extraPrice) {
+        //replace euro sing
+        extraPrice = extraPrice.replaceAll("€", "");
 
+        LayoutInflater factory = LayoutInflater.from(getContext());
+        final View editExtraDialogView = factory.inflate(R.layout.edit_extra, null);
+        final AlertDialog editExtraDialog = new AlertDialog.Builder(getContext()).create();
+        editExtraDialog.setView(editExtraDialogView);
+
+        //init Views
+        editExtraNameTL = editExtraDialogView.findViewById(R.id.edit_extra_name_layout);
+        editExtraPriceTL = editExtraDialogView.findViewById(R.id.edit_extra_price_layout);
+
+        //Put values into editTexts
+        Objects.requireNonNull(editExtraNameTL.getEditText()).setText(extraName);
+        Objects.requireNonNull(editExtraPriceTL.getEditText()).setText(extraPrice);
+
+        editExtraDialogView.findViewById(R.id.edit_extra_ok).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditExtra(extraId, editExtraDialog);
+            }
+        });
+        editExtraDialogView.findViewById(R.id.edit_extra_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editExtraDialog.dismiss();
+            }
+        });
+
+        editExtraDialog.show();
+    }
+
+    private void EditExtra(String extraId, AlertDialog editExtraDialog) {
+        if (Objects.requireNonNull(editExtraNameTL.getEditText()).getText().toString().isEmpty()) {
+            showError(editExtraNameTL, getString(R.string.name_is_not_valid));
+        } else if (Objects.requireNonNull(editExtraPriceTL.getEditText()).getText().toString().isEmpty()) {
+            showError(editExtraPriceTL, getString(R.string.price_is_not_valid));
+        } else{
+            //Get the values
+            extraNameTL = editExtraNameTL.getEditText().getText().toString();
+            extraPriceTL = editExtraPriceTL.getEditText().getText().toString();
+
+            //Get key ID
+            String key = mExtraRef.child(extraId).getKey();
+            Log.d(TAG, "EditExtra: key: " + key);
+
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put(getString(R.string.ref_extra_id), key);
+            hashMap.put(getString(R.string.ref_extra_name), extraNameTL);
+            hashMap.put(getString(R.string.ref_extra_price), extraPriceTL);
+
+            mExtraRef.child(key).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    Toast.makeText(getContext(), getString(R.string.successful_edit_of_extra), Toast.LENGTH_SHORT).show();
+                    editExtraDialog.dismiss();
+                }
+            });
+        }
     }
 
     private void showError(@NonNull TextInputLayout field, String text) {

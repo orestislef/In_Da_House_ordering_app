@@ -33,6 +33,6 @@ public class Extras {
     }
 
     public void setExtraPrice(String extraPrice) {
-        this.extraPrice = extraPrice;
+        this.extraPrice = extraPrice + "€";
     }
 }

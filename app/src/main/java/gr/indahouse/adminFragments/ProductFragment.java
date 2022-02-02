@@ -306,13 +306,12 @@ public class ProductFragment extends Fragment {
             prodNameTL = Objects.requireNonNull(editProdNameTL.getEditText()).getText().toString();
             prodPriceTL = Objects.requireNonNull(editProdPriceTL.getEditText()).getText().toString();
 
-            //Get unique key ID
+            //Get key ID
             String key = mProductsRef.child(productId).getKey();
             Log.d(TAG, "EditProduct: key: " + key);
 
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put(getString(R.string.ref_product_id), key);
-//        hashMap.put(getString(R.string.ref_category_position), categoryPosition);
             hashMap.put(getString(R.string.ref_product_name), prodNameTL);
             hashMap.put(getString(R.string.ref_product_price), prodPriceTL);
             hashMap.put(getString(R.string.ref_product_category_id), prodCategoryId);
@@ -351,9 +350,6 @@ public class ProductFragment extends Fragment {
                 Log.d(TAG, "onDataChange: testing123" + map);
                 itemsId = map.keySet().toArray(new String[0]);
                 itemsName = map.values().toArray(new String[0]);
-                Log.d(TAG, "onDataChange: testing123" + Arrays.toString(itemsId));
-                Log.d(TAG, "onDataChange: testing123" + Arrays.toString(itemsName));
-
             }
 
             @Override

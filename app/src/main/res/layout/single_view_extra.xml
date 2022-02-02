@@ -15,6 +15,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:elevation="4dp"
+        app:cardCornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,6 +35,8 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="24dp"
                 android:text="@string/extra_name_label"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/extraPrice"
                 app:layout_constraintStart_toStartOf="parent"
@@ -43,6 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
+                android:lineSpacingExtra="2dp"
                 android:text="@string/price_label"
                 app:layout_constraintBottom_toBottomOf="@+id/extraName"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +65,7 @@
                 app:layout_constraintStart_toEndOf="@+id/extraName"
                 app:layout_constraintTop_toTopOf="@+id/extraName"
                 app:srcCompat="@drawable/ic_baseline_delete_24"
-                tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck"/>
+                tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
