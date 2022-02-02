@@ -204,10 +204,10 @@
 
     <!--for alertDialog products -->
     <string name="are_you_sure_to_delete_product_title_label">Προσοχή</string>
-    <string name="are_you_sure_to_delete_product_message_label">Είστε σίγουροι οτι θέλετε να διαγράψετε το προϊόν;</string>
+    <string name="are_you_sure_to_delete_product_message_label">Είστε σίγουροι οτι θέλετε να διαγράψετε το προϊόν</string>
 
     <!--for alertDialog extras -->
     <string name="are_you_sure_to_delete_extra_title_label">Προσοχή</string>
-    <string name="are_you_sure_to_delete_extra_message_label">Είστε σίγουροι οτι θέλετε να διαγράψετε το extra;</string>
+    <string name="are_you_sure_to_delete_extra_message_label">Είστε σίγουροι οτι θέλετε να διαγράψετε το extra</string>
 
 </resources>

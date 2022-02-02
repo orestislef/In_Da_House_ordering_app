@@ -180,7 +180,7 @@ public class ExtrasFragment extends Fragment {
                         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
                         dialog.setTitle(getString(R.string.are_you_sure_to_delete_extra_title_label))
                                 .setIcon(R.drawable.ic_baseline_delete_24)
-                                .setMessage(getString(R.string.are_you_sure_to_delete_extra_message_label))
+                                .setMessage(getString(R.string.are_you_sure_to_delete_extra_message_label)+": "+model.getExtraName()+";")
                                 .setNegativeButton(getString(R.string.cancel_admin_btn_label), new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialoginterface, int i) {
                                         dialoginterface.cancel();
