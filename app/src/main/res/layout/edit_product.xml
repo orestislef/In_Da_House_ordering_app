@@ -29,7 +29,7 @@
         android:id="@+id/edit_product_price_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="@+id/edit_product_name_layout"
         app:layout_constraintStart_toStartOf="@+id/edit_product_name_layout"
