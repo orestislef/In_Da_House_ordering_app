@@ -57,7 +57,9 @@ public class ProductFragment extends Fragment {
     AutoCompleteTextView autoCompleteAddCategoryIdTextView, autoCompleteEditCategoryIdTextView;
     ArrayAdapter<String> adapterItemsId;
     ArrayAdapter<String> adapterItemsName;
-    String[] itemsId, itemsName;
+    String[] itemsId;
+    String[] itemsName;
+    String editProdCategoryId;
 
     Map<String, String> map = new HashMap<String, String>();
 
@@ -247,8 +249,6 @@ public class ProductFragment extends Fragment {
         //replace euro sing
         productPrice = productPrice.replaceAll("€", "");
 
-        final String[] editProdCategoryId = {null};
-
         LayoutInflater factory = LayoutInflater.from(getContext());
         final View editProductDialogView = factory.inflate(R.layout.edit_product, null);
         final AlertDialog editProductDialog = new AlertDialog.Builder(getContext()).create();
@@ -273,14 +273,14 @@ public class ProductFragment extends Fragment {
         autoCompleteEditCategoryIdTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                editProdCategoryId[0] = itemsId[position];
+                editProdCategoryId = itemsId[position];
             }
         });
 
         editProductDialogView.findViewById(R.id.edit_product_ok).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditProduct(productId, editProductDialog, editProdCategoryId[0]);
+                EditProduct(productId, editProductDialog, editProdCategoryId);
             }
         });
         editProductDialogView.findViewById(R.id.edit_product_cancel).setOnClickListener(new View.OnClickListener() {
@@ -305,18 +305,15 @@ public class ProductFragment extends Fragment {
             //Get the values
             prodNameTL = Objects.requireNonNull(editProdNameTL.getEditText()).getText().toString();
             prodPriceTL = Objects.requireNonNull(editProdPriceTL.getEditText()).getText().toString();
-
-            //Get key ID
-            String key = mProductsRef.child(productId).getKey();
-            Log.d(TAG, "EditProduct: key: " + key);
+            prodCategoryId = editProdCategoryId;
 
             HashMap<String, Object> hashMap = new HashMap<>();
-            hashMap.put(getString(R.string.ref_product_id), key);
+            hashMap.put(getString(R.string.ref_product_id), productId);
             hashMap.put(getString(R.string.ref_product_name), prodNameTL);
             hashMap.put(getString(R.string.ref_product_price), prodPriceTL);
             hashMap.put(getString(R.string.ref_product_category_id), prodCategoryId);
 
-            mProductsRef.child(key).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+            mProductsRef.child(productId).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void unused) {
                     Toast.makeText(getContext(), getString(R.string.successful_edit_of_product), Toast.LENGTH_SHORT).show();

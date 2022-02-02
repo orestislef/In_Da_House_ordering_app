@@ -251,16 +251,12 @@ public class ExtrasFragment extends Fragment {
             extraNameTL = editExtraNameTL.getEditText().getText().toString();
             extraPriceTL = editExtraPriceTL.getEditText().getText().toString();
 
-            //Get key ID
-            String key = mExtraRef.child(extraId).getKey();
-            Log.d(TAG, "EditExtra: key: " + key);
-
             HashMap<String, Object> hashMap = new HashMap<>();
-            hashMap.put(getString(R.string.ref_extra_id), key);
+            hashMap.put(getString(R.string.ref_extra_id), extraId);
             hashMap.put(getString(R.string.ref_extra_name), extraNameTL);
             hashMap.put(getString(R.string.ref_extra_price), extraPriceTL);
 
-            mExtraRef.child(key).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+            mExtraRef.child(extraId).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void unused) {
                     Toast.makeText(getContext(), getString(R.string.successful_edit_of_extra), Toast.LENGTH_SHORT).show();
