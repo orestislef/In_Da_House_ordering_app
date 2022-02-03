@@ -1,7 +1,6 @@
 package gr.indahouse.adminFragments;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -30,7 +28,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -133,16 +130,8 @@ public class AdminProductFragment extends Fragment {
                     dialog.setTitle(getString(R.string.are_you_sure_to_delete_product_title_label))
                             .setIcon(R.drawable.ic_baseline_delete_24)
                             .setMessage(getString(R.string.are_you_sure_to_delete_product_message_label) + ": " + model.getProductName() + ";")
-                            .setNegativeButton(getString(R.string.cancel_admin_btn_label), new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialoginterface, int i) {
-                                    dialoginterface.cancel();
-                                }
-                            })
-                            .setPositiveButton(getString(R.string.delete_label), new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialoginterface, int i) {
-                                    mProductsRef.child(model.getProductId()).removeValue();
-                                }
-                            }).show();
+                            .setNegativeButton(getString(R.string.cancel_admin_btn_label), (dialogInterface, i) -> dialogInterface.cancel())
+                            .setPositiveButton(getString(R.string.delete_label), (dialogInterface, i) -> mProductsRef.child(model.getProductId()).removeValue()).show();
                 });
 
                 holder.singleViewProductConstraint.setOnClickListener(v -> {
