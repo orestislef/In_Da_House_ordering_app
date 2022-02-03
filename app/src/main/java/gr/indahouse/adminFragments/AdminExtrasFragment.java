@@ -53,6 +53,7 @@ public class AdminExtrasFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @NonNull
     public static AdminExtrasFragment newInstance() {
         AdminExtrasFragment fragment = new AdminExtrasFragment();
         Bundle args = new Bundle();
@@ -66,7 +67,7 @@ public class AdminExtrasFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_extras, container, false);

@@ -67,6 +67,7 @@ public class AdminProductFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @NonNull
     public static AdminProductFragment newInstance() {
         AdminProductFragment fragment = new AdminProductFragment();
         Bundle args = new Bundle();

@@ -42,6 +42,7 @@ public class MenuCategoryFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @NonNull
     public static MenuCategoryFragment newInstance() {
         MenuCategoryFragment fragment = new MenuCategoryFragment();
         Bundle args = new Bundle();
@@ -55,7 +56,7 @@ public class MenuCategoryFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_menu_category, container, false);

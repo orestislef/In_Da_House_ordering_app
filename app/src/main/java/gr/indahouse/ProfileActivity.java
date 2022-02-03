@@ -195,7 +195,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void showError(TextInputLayout input, String s) {
+    private void showError(@NonNull TextInputLayout input, String s) {
         input.setError(s);
         input.requestFocus();
     }

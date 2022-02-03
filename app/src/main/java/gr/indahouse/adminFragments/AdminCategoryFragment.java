@@ -55,6 +55,7 @@ public class AdminCategoryFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @NonNull
     public static AdminCategoryFragment newInstance() {
         AdminCategoryFragment fragment = new AdminCategoryFragment();
         Bundle args = new Bundle();
@@ -68,7 +69,7 @@ public class AdminCategoryFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_category, container, false);
@@ -166,7 +167,7 @@ public class AdminCategoryFragment extends Fragment {
         editCategoryDialog.show();
     }
 
-    private void addNewCategory(View addNewCategoryDialogView, AlertDialog addCategoryDialog) {
+    private void addNewCategory(@NonNull View addNewCategoryDialogView, AlertDialog addCategoryDialog) {
         //init Views
         newCatName = addNewCategoryDialogView.findViewById(R.id.new_category_name_layout);
         newCatDesc = addNewCategoryDialogView.findViewById(R.id.new_category_desc_layout);
@@ -214,7 +215,7 @@ public class AdminCategoryFragment extends Fragment {
 
     }
 
-    private void showError(TextInputLayout field, String text) {
+    private void showError(@NonNull TextInputLayout field, String text) {
         field.setError(text);
         field.requestFocus();
     }

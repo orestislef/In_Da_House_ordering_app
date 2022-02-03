@@ -172,6 +172,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                                     //If  Data is saved then go to MainActivity
                                     Intent intent = new Intent(SetupActivity.this, MainActivity.class);
                                     startActivity(intent);
+                                    finish();
                                     mLoadingBar.dismiss();
                                     Toast.makeText(SetupActivity.this, getString(R.string.setup_complete_msg), Toast.LENGTH_SHORT).show();
                                 }).addOnFailureListener(e -> {
@@ -192,7 +193,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void showError(TextInputLayout input, String s) {
+    private void showError(@NonNull TextInputLayout input, String s) {
         input.setError(s);
         input.requestFocus();
     }

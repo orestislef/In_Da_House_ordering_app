@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(@NonNull View v) {
         switch (v.getId()) {
             case R.id.createNewAccount:
                 //if click on createNewAccount go to RegisterActivity
@@ -146,7 +146,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    private void showError(TextInputLayout field, String text) {
+    private void showError(@NonNull TextInputLayout field, String text) {
         field.setError(text);
         field.requestFocus();
     }

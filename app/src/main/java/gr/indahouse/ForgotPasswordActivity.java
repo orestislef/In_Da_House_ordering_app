@@ -62,7 +62,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(@NonNull View v) {
         if (v.getId() == R.id.btnReset) {
             String email = Objects.requireNonNull(inputEmail.getEditText()).getText().toString();
             if (email.isEmpty()) {

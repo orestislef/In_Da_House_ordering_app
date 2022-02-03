@@ -64,7 +64,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(@NonNull View v) {
         switch (v.getId()) {
             //if Click to
             case R.id.btnRegister:
@@ -114,7 +114,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    private void showError(TextInputLayout field, String text) {
+    private void showError(@NonNull TextInputLayout field, String text) {
         field.setError(text);
         field.requestFocus();
     }
