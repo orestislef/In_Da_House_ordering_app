@@ -16,28 +16,16 @@
             android:id="@+id/app_bar"
             layout="@layout/main_appbar" />
 
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/menuTabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/app_bar"
-            tools:ignore="SpeakableTextPresentCheck" />
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/menuViewPager"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentContainerView"
+            android:name="gr.indahouse.menuFragments.MenuCategoryFragment"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="1dp"
-            android:layout_marginBottom="1dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/menuTabLayout" />
+            app:layout_constraintEnd_toEndOf="@+id/app_bar"
+            app:layout_constraintStart_toStartOf="@+id/app_bar"
+            app:layout_constraintTop_toBottomOf="@+id/app_bar" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

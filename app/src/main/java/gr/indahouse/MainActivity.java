@@ -5,8 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -15,9 +13,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,7 +28,7 @@ import com.squareup.picasso.Picasso;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import gr.indahouse.menuFragments.MenuFragmentAdapter;
+import gr.indahouse.menuFragments.MenuProductFragment;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -45,9 +43,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     CircleImageView profileImageViewHeader;
     TextView usernameHeader;
     ProgressDialog mLoadingBar;
-    TabLayout menuTabLayout;
-    ViewPager2 menuViewPager;
-    MenuFragmentAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,40 +65,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //init Views
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navView);
-
-        menuTabLayout = findViewById(R.id.menuTabLayout);
-        menuViewPager = findViewById(R.id.menuViewPager);
-
-        FragmentManager fm = getSupportFragmentManager();
-        adapter = new MenuFragmentAdapter(fm, getLifecycle());
-        menuViewPager.setAdapter(adapter);
-
-        menuTabLayout.addTab(menuTabLayout.newTab().setText(getString(R.string.category_menu_label)));
-        menuTabLayout.addTab(menuTabLayout.newTab().setText(getString(R.string.product_admin_label)));
-
-        menuTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                menuViewPager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-
-        menuViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                menuTabLayout.selectTab(menuTabLayout.getTabAt(position));
-            }
-        });
 
         //init header in NavigationView
         View view = navigationView.inflateHeaderView(R.layout.drawer_header);

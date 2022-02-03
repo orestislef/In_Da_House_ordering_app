@@ -3,6 +3,8 @@ package gr.indahouse.menuFragments;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +19,8 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Objects;
+
 import gr.indahouse.R;
 import gr.indahouse.utils.ProductViewHolder;
 import gr.indahouse.utils.Products;
@@ -30,7 +34,7 @@ public class MenuProductFragment extends Fragment {
     DatabaseReference mProductRef;
     RecyclerView prodRecyclerView;
 
-    String prodName, prodPrice;
+    String prodName, prodPrice, categoryId, categoryName;
 
     View view;
 
@@ -54,6 +58,13 @@ public class MenuProductFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        categoryId = getArguments().getString(getString(R.string.ref_product_category_id));
+        categoryName =getArguments().getString(getString(R.string.ref_category_name));
+
+        ((AppCompatActivity)(getActivity())).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setSubtitle(categoryName);
+
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_menu_product, container, false);
 
@@ -74,7 +85,11 @@ public class MenuProductFragment extends Fragment {
     }
 
     private void loadProducts() {
-        productOptions = new FirebaseRecyclerOptions.Builder<Products>().setQuery(mProductRef, Products.class).build();
+
+
+        productOptions = new FirebaseRecyclerOptions.Builder<Products>()
+                .setQuery(mProductRef.orderByChild(getString(R.string.ref_product_category_id)).equalTo(categoryId), Products.class)
+                .build();
 
         productAdapter = new FirebaseRecyclerAdapter<Products, ProductViewHolder>(productOptions) {
 

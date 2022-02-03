@@ -30,6 +30,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -57,7 +58,6 @@ public class AdminProductFragment extends Fragment {
     ArrayAdapter<String> adapterItemsId;
     String[] itemsId;
     String[] itemsName;
-    String editProdCategoryId;
 
     Map<String, String> map = new HashMap<String, String>();
 
@@ -132,7 +132,7 @@ public class AdminProductFragment extends Fragment {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
                     dialog.setTitle(getString(R.string.are_you_sure_to_delete_product_title_label))
                             .setIcon(R.drawable.ic_baseline_delete_24)
-                            .setMessage(getString(R.string.are_you_sure_to_delete_product_message_label)+": "+model.getProductName()+";")
+                            .setMessage(getString(R.string.are_you_sure_to_delete_product_message_label) + ": " + model.getProductName() + ";")
                             .setNegativeButton(getString(R.string.cancel_admin_btn_label), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialoginterface, int i) {
                                     dialoginterface.cancel();
@@ -238,14 +238,17 @@ public class AdminProductFragment extends Fragment {
         editProdPriceTL = editProductDialogView.findViewById(R.id.edit_product_price_layout);
         editProdCategoryIdTL = editProductDialogView.findViewById(R.id.edit_product_category_id_layout);
 
+        final String[] mProductCategoryId = new String[1];
+        mProductCategoryId[0] = productCategoryId;
+
         //Put values into editTexts
         Objects.requireNonNull(editProdNameTL.getEditText()).setText(productName);
         Objects.requireNonNull(editProdPriceTL.getEditText()).setText(productPrice);
 
         //Change Name of category id To id of category
-        autoCompleteEditCategoryIdTextView.setOnItemClickListener((parent, view, position, id) -> editProdCategoryId = itemsId[position]);
+        autoCompleteEditCategoryIdTextView.setOnItemClickListener((parent, view, position, id) -> mProductCategoryId[0] = itemsId[position]);
 
-        editProductDialogView.findViewById(R.id.edit_product_ok).setOnClickListener(v -> EditProduct(productId, editProductDialog, editProdCategoryId));
+        editProductDialogView.findViewById(R.id.edit_product_ok).setOnClickListener(v -> EditProduct(productId, editProductDialog, mProductCategoryId[0]));
         editProductDialogView.findViewById(R.id.edit_product_cancel).setOnClickListener(v -> editProductDialog.dismiss());
         editProductDialog.show();
 
@@ -263,7 +266,6 @@ public class AdminProductFragment extends Fragment {
             //Get the values
             prodNameTL = Objects.requireNonNull(editProdNameTL.getEditText()).getText().toString();
             prodPriceTL = Objects.requireNonNull(editProdPriceTL.getEditText()).getText().toString();
-            prodCategoryId = editProdCategoryId;
 
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put(getString(R.string.ref_product_id), productId);

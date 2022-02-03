@@ -1,9 +1,12 @@
 package gr.indahouse.menuFragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -73,6 +76,10 @@ public class MenuCategoryFragment extends Fragment {
         linearLayoutManager.setReverseLayout(false);
         catRecyclerView.setLayoutManager(linearLayoutManager);
 
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(getString(R.string.category_menu_label));
+
+
         loadCategories();
 
         return view;
@@ -95,6 +102,24 @@ public class MenuCategoryFragment extends Fragment {
                 holder.catName.setText(model.getCategoryName());
                 holder.catDescription.setText(model.getCategoryDesc());
                 Picasso.get().load(model.getCategoryImageUrl()).placeholder(R.drawable.ic_baseline_local_cafe_24).resize(250, 250).centerInside().into(holder.catImage);
+
+                holder.catCardView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //inflate MenuCategoryFragment//
+
+                        Bundle bundle = new Bundle();
+                        bundle.putString(getString(R.string.ref_product_category_id),model.getCategoryId());
+                        bundle.putString(getString(R.string.ref_category_name),model.getCategoryName());
+                        MenuProductFragment menuProductFragment = new MenuProductFragment();
+                        menuProductFragment.setArguments(bundle);
+
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        ft.replace(R.id.fragmentContainerView,menuProductFragment);
+                        ft.addToBackStack("MenuCategoryFragment");
+                        ft.commit();
+                    }
+                });
             }
         };
         categoryAdapter.startListening();
